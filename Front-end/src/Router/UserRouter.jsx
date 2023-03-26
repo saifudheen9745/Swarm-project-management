@@ -1,5 +1,6 @@
 import React from 'react'
 import {Routes,Route} from 'react-router-dom'
+import ErrorPage from '../Components/ErrorPageComponent.jsx/ErrorPage'
 import HomePage from '../Components/HomePage/HomePageComponent'
 import EmailConfirmationPage from '../Pages/User/EmailConfirmationPage'
 import LandingPage from '../Pages/User/LandingPage'
@@ -24,6 +25,7 @@ function UserRouter() {
           <Route exact path='/otp' element={<OtpLoginPage/>}/>
           <Route exact path='/home' element={<HomePage/>}/>
           <Route exact path='/resetpassword' element={<ResetPasswordPage/>}/>
+          <Route exact path='/error' element={<ErrorPage/>}/>
           
         </Routes>
     </div>

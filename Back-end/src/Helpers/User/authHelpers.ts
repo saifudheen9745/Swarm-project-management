@@ -33,7 +33,7 @@ const {
 
 export class authHelpers {
 
-  
+
   async doSignUp(regDetails: userRegInterface) {
     try {
       if (regDetails.password)
@@ -102,8 +102,6 @@ export class authHelpers {
   async verifyEmail(id: string, token: string) {
     try {
       const user = await findUserById(id);
-      if (!user) throw { msg: "Invalid link" };
-      // const isValidToken:Boolean = await verifyingToken(token)
       return await verifyConfirmLinkToken(token, user.id);
     } catch (error) {
       throw { error };

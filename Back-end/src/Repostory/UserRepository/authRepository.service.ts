@@ -39,11 +39,7 @@ export class authRepository{
 
     async loginUserWithNumber(loginDetails:any){
         try {
-            console.log(loginDetails);
-            
             const userFound =  await userRegisterSchema.find({mobile:loginDetails.mobile})
-            console.log(userFound);
-            
             if(userFound.length == 0){
                 throw{msg:"Mobile number is not registered"}
             }else{
@@ -56,9 +52,17 @@ export class authRepository{
 
     async findUserById(id:string){
         try {
-            return userRegisterSchema.findById({_id:id})
-        } catch (error) {
-            throw{error}
+            
+            const user:any = await userRegisterSchema.findById({_id:id})
+            if(!user){
+                throw {msg: "Invalid link" };
+            }else{
+                return user
+            }
+        } catch (error:any) {
+            if(error.kind == "ObjectId"){
+                throw{error:{msg:"Invalid link"}}
+            }
         }
     }
 

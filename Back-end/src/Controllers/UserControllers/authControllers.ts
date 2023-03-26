@@ -21,7 +21,7 @@ const {
   verifyOtp,
   updatePassword,
   checkEmailValidity,
-  getEmailWithId
+  getEmailWithId,
 } = userAuthHelpers;
 
 export const userRegistration = async (req: Request, res: Response) => {
@@ -56,7 +56,12 @@ export const userRegistrationWithGoogle = async (
     //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
     res
       .status(200)
-      .json({ accessToken,userId:response._id.toString(), name: response.displayName, email: response.email });
+      .json({
+        accessToken,
+        userId: response._id.toString(),
+        name: response.displayName,
+        email: response.email,
+      });
   } catch (error) {
     res.status(401).json(error);
   }
@@ -73,14 +78,12 @@ export const userLogin = async (req: Request, res: Response) => {
     );
     res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
     //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
-    res
-      .status(200)
-      .json({
-        accessToken,
-        userId:response._id.toString(),
-        name: response.fname + response.lname,
-        email: response.email,
-      });
+    res.status(200).json({
+      accessToken,
+      userId: response._id.toString(),
+      name: response.fname + response.lname,
+      email: response.email,
+    });
   } catch (error: any) {
     res.status(401).json(error);
   }
@@ -97,14 +100,12 @@ export const userLoginWithGoogle = async (req: Request, res: Response) => {
     );
     res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
     //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
-    res
-      .status(200)
-      .json({
-        accessToken,
-        userId:response._id.toString(),
-        name: response.fname + response.lname,
-        email: response.email,
-      });
+    res.status(200).json({
+      accessToken,
+      userId: response._id.toString(),
+      name: response.fname + response.lname,
+      email: response.email,
+    });
   } catch (error) {
     res.status(401).json(error);
   }
@@ -142,63 +143,66 @@ export const createTokenForOtpAuth = async (req: Request, res: Response) => {
     );
     res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
     // res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
-    res
-      .status(200)
-      .json({
-        accessToken,
-        userId:response._id.toString(),
-        name: response.fname + response.lname,
-        email: response.email,
-      });
-  } catch (error) {
-    res.status(401).json(error);
-  }
-};
-
-export const sentOtpMailForPasswordChange = async (req: Request,res: Response) => {
-  try {
-    const response:any =await checkEmailValidity(req.body.email)
-    const otp:any = await generateOtp(req.body.email);
-    const mailResponse = await sentResetPasswordMail(req.body.email,otp.otp)
-    res.status(200).json(mailResponse)
-  } catch (error) {
-    res.status(401).json(error);
-  }
-};
-
-
-export const verifyOtpForPasswordChange = async (req: Request,res: Response) => {
-    try {
-      const response:any = verifyOtp(req.body.otp)
-      res.status(200).json({otpVerified:true})
-    } catch (error) {
-      res.status(401).json(error);  
-    }
-}
-
-export const updateUserPassword = async (req: Request,res: Response)=>{
-  try {
-    const response:any = await updatePassword(req.body)
-    res.status(200).json({passwordChanged:true})
-  } catch (error) {
-    res.status(401).json(error)
-  }
-}
-
-export const resentConfirmationMail = async(req:Request,res:Response)=>{
-  try {
-    const response:any = await getEmailWithId(req.body.userId) 
-    const verifyLink: string = await generateLink({
-      id: req.body.userId,
-    });
-    const mailResponse = await sentVerifyEmail({
+    res.status(200).json({
+      accessToken,
+      userId: response._id.toString(),
+      name: response.fname + response.lname,
       email: response.email,
-      link: verifyLink,
     });
-    res.status(200).json({ Mail: mailResponse });
   } catch (error) {
-    console.log(error);
-    
+    res.status(401).json(error);
+  }
+};
+
+export const sentOtpMailForPasswordChange = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const response: any = await checkEmailValidity(req.body.email);
+    const otp: any = await generateOtp(req.body.email);
+    const mailResponse = await sentResetPasswordMail(req.body.email, otp.otp);
+    res.status(200).json(mailResponse);
+  } catch (error) {
+    res.status(401).json(error);
+  }
+};
+
+export const verifyOtpForPasswordChange = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const response: any = verifyOtp(req.body.otp);
+    res.status(200).json({ otpVerified: true });
+  } catch (error) {
+    res.status(401).json(error);
+  }
+};
+
+export const updateUserPassword = async (req: Request, res: Response) => {
+  try {
+    const response: any = await updatePassword(req.body);
+    res.status(200).json({ passwordChanged: true });
+  } catch (error) {
+    res.status(401).json(error);
+  }
+};
+
+export const resentConfirmationMail = async (req: Request, res: Response) => {
+  try {
+    const response: any = await getEmailWithId(req.body.userId);
+    if (response) {
+      const verifyLink: string = await generateLink({
+        id: req.body.userId,
+      });
+      const mailResponse = await sentVerifyEmail({
+        email: response.email,
+        link: verifyLink,
+      });
+      res.status(200).json({ Mail: mailResponse });
+    }
+  } catch (error) {
     res.status(401).json(error)
   }
-}
+};

@@ -29,7 +29,8 @@ const apiCall = ()=>{
             const response = await axios.post('/confirmation',urlData)
             return response.data
         } catch (error) {
-            throw{msg:error.response.data.error.error.msg}
+            
+            throw{msg:error.response.data.error.error}
         }
     }
 
@@ -38,6 +39,7 @@ const apiCall = ()=>{
             const response = await axios.post('/resendconfirmationmail',userId)
             return response.data
         } catch (error) {
+            console.log(error.response.data.error.error);
             throw{msg:error.response.data.error.error.msg}
         }
     }
