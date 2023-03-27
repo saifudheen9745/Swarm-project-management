@@ -1,6 +1,7 @@
 
 import { Request, Response } from 'express'
 import { sign,verify } from 'jsonwebtoken'
+import { json } from 'stream/consumers'
 import {userRegisterSchema} from '../Models/UserModels/authModel'
 import { authRepository } from '../Repostory/UserRepository/authRepository.service'
 import { jwtPayloadInterface } from '../Types/user.types'
@@ -28,9 +29,17 @@ export class jwtOptions{
     async verifyConfirmLinkToken(token:string,id:string){
         try {
             return await verify(token,process.env.CONFIRM_EMAIL_TOKEN as string, async function(err:any,data:any){
-                if(err) throw{msg:"Link expired"}
+                if(err){
+                    const error:any = await JSON.stringify(err)
+                    const {message} = JSON.parse(error)
+                    if(message == "invalid signature"){
+                        throw{msg:"Invalid Link"}
+                    }else{
+                        throw{msg:"Link expired"}
+                    } 
+                }
                 let details:any = await findUserById(data.user)
-                if(details._id != id) throw{msg:"Invalid link"}
+                if(details._id != id) throw{msg:"invalid link"}
                 await setIsVerifiedTrue(id)
                 return "Email verified successfully"
             })

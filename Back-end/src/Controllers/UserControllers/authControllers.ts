@@ -128,6 +128,8 @@ export const emailVerification = async (req: Request, res: Response) => {
     const response = await verifyEmail(req.body.id, req.body.token);
     res.status(200).json(response);
   } catch (error) {
+    console.log(error);
+    
     res.status(401).json(error);
   }
 };

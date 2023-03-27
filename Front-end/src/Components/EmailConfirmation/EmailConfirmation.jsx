@@ -8,6 +8,7 @@ function EmailConfirmation() {
   const { verifyMail, resendVerifyMail } = apiCall();
   const { id, token } = useParams();
   const [verified, setVerified] = useState(false);
+  const [alreadyVerifiedUser, setAlreadyVerifiedUser] = useState(false);
   const [linkExpired, setLinkExpired] = useState(false);
   const [resendMail, setResendMail] = useState(false);
   const [invalidLink, setInvalidLink] = useState(false);
@@ -19,9 +20,13 @@ function EmailConfirmation() {
           setVerified(true);
         }
       } catch (error) {
-        setLinkExpired(!linkExpired);
-        if (error.msg.msg == "Invalid link") {
+        if (error.msg.msg == "Invalid Link") {
+          setLinkExpired(false);
           setInvalidLink(true);
+        }else if(error.msg.msg == "Link expired"){
+          setLinkExpired(true);
+        }else if(error.msg.msg == "User already verified"){
+          setAlreadyVerifiedUser(!alreadyVerifiedUser)
         }
       }
     };
@@ -44,10 +49,10 @@ function EmailConfirmation() {
     <div className="bg-gradient-to-r from-green-300 to-blue-400 flex justify-center items-center flex-col">
       <div
         className="flex items-center justify-center min-h-screen p-5 min-w-screen"
-        style={{ display: linkExpired || resendMail ? "none" : "block" }}
+        style={{ display: linkExpired || resendMail || invalidLink ? "none" : "block" }}
       >
         <div className="max-w-xl p-8 text-center text-gray-800 bg-white shadow-xl lg:max-w-3xl rounded-3xl lg:p-12">
-          <h3 className="text-2xl">Thanks for verifying your email</h3>
+          {setAlreadyVerifiedUser ? <h3 className="text-2xl">The user is already veified</h3> :<h3 className="text-2xl">Thanks for verifying your email</h3>}
           <div className="flex justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -65,10 +70,12 @@ function EmailConfirmation() {
             </svg>
           </div>
 
-          <p className="text-xl font-semibold">
+          {alreadyVerifiedUser ? <p className="text-xl font-semibold">
+            Please click below to proceed to login
+          </p> :<p className="text-xl font-semibold">
             We're happy you're here. Let's get you logged in. <br />
             Click here to login{" "}
-          </p>
+          </p>}
           <button
             onClick={() => navigate("/login")}
             type="button"
@@ -82,7 +89,7 @@ function EmailConfirmation() {
       <div
         className="flex items-center justify-center min-h-screen p-5 min-w-screen"
         style={{
-          display: linkExpired && resendMail == false ? "block" : "none",
+          display: invalidLink || linkExpired ? "block" : "none",
         }}
       >
         <div className="max-w-xl p-8 text-center text-gray-800 bg-white shadow-xl lg:max-w-3xl rounded-3xl lg:p-12">
@@ -109,16 +116,16 @@ function EmailConfirmation() {
           </div>
 
           <p className="text-xl font-semibold">
-            We're happy you're here. Let's get you verified. <br />
-            Click here to resend link{" "}
+            Oops looks like somethings changed. <br />
+            Please register again for a new link
           </p>
-          <button
-            onClick={handleNewVerifyLinkRequest}
+          {<button
+            onClick={()=>navigate('/register')}
             type="button"
             className="text-white mt-9 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
           >
-            Request for a new link
-          </button>
+            Register
+          </button>}
         </div>
       </div>
 

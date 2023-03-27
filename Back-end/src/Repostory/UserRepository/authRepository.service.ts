@@ -54,14 +54,20 @@ export class authRepository{
         try {
             
             const user:any = await userRegisterSchema.findById({_id:id})
+            console.log(user);
             if(!user){
-                throw {msg: "Invalid link" };
+                throw {msg: "Invalid Link" };
+            }else if(user?.isVerified){
+                throw {msg:"User already verified"}
             }else{
                 return user
             }
+            
         } catch (error:any) {
             if(error.kind == "ObjectId"){
-                throw{error:{msg:"Invalid link"}}
+                throw{error:{msg:"Invalid Link"}}
+            }else{
+                throw{error}
             }
         }
     }
