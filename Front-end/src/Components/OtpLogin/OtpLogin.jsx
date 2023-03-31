@@ -6,17 +6,17 @@ import {RecaptchaVerifier,signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../Firebase/config";
 //Redux hooks
 import {useDispatch} from 'react-redux'
-import {setAccessToken} from '../../Redux/Slices/authSlice'
 import {setDetails} from '../../Redux/Slices/userSlice'
 import apiCall from "../../Api/api";
 import { invalidLoginCred } from "../ToastifyAlerts/ToastifyAlerts";
 import Swal from "sweetalert2";
+import { ToastContainer } from "react-toastify";
 
 
 function OtpLogin() {
 
     const dispatch = useDispatch()
-    const {createJwtToken} = apiCall()
+    const {createJwtToken,checkNumber} = apiCall()
 
     const [number,setNumber] = useState("") // to store the mobile number
     const [confirmObj,setConfirmObj] = useState("") // to store the recaptcha response obj
@@ -44,14 +44,22 @@ function OtpLogin() {
             return setError("Please enter a valid phone number")
         }
         try {
+            const isRegisteredNumber = await checkNumber({number})
             const response = await setUpRecaptcha(number)
             setConfirmObj(response)
             setflag(true)
         } catch (error) {
-            setError(error.message)
-            Swal.fire({
-              title:"Firebase otp error"
-            })
+          console.log(error);
+            console.log(error.msg);
+            if(error.msg == "Mobile is not registered" ){
+              invalidLoginCred(error.msg)
+            }else{
+              setError(error.message)
+              console.log(error.message);
+              Swal.fire({
+                title:"Firebase otp error"
+              })
+            }
         }
         
     }
@@ -73,8 +81,7 @@ function OtpLogin() {
     const createJwtAuthToken = async(number)=>{
       try {
         const loginResponse = await createJwtToken({mobile:number})
-        dispatch(setAccessToken(loginResponse.accessToken))
-        dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email}))
+        dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email,accesToken:loginResponse.accessToken}))
         navigate('/test')
       } catch (error) {
           invalidLoginCred(error.msg)
@@ -82,8 +89,9 @@ function OtpLogin() {
     }
 
   return (
+    
     <div className="p-10 md:p-0" >
-      <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12" style={{display: !flag ? "block" : "none"}}>
+      <div className="relative flex min-h-screen flex-col justify-center items-center overflow-hidden bg-gray-50 py-12" style={{display: !flag ? "block" : "none"}}>
         <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
           <div className="mx-auto flex w-full max-w-md flex-col space-y-16">
             <div className="flex flex-col items-center justify-center text-center space-y-2">
@@ -193,7 +201,9 @@ function OtpLogin() {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
+  
   );
 }
 

@@ -11,11 +11,7 @@ import apiCall from '../../Api/api'
 import swalAlerts from '../SwalAlerts/SwalAlerts'
 import { useNavigate } from 'react-router-dom'
 //
-import {auth,provider} from "../../Firebase/config"
-import { signInWithPopup } from 'firebase/auth'
-import {useDispatch} from 'react-redux'
-import {setAccessToken} from '../../Redux/Slices/authSlice'
-import {setDetails} from '../../Redux/Slices/userSlice'
+
 import userAuthentications from '../../Firebase/UserAuthentications'
 
 function SignUpPage() {
@@ -38,6 +34,7 @@ function SignUpPage() {
         }
         try {
             const signupResponse = await doRegister(signupFormData) //api call to register user
+            console.log(signupResponse);
             successRegistration()
         } catch (error) {
             invalidRegisterCred(error)
@@ -84,17 +81,13 @@ function SignUpPage() {
 
                     <form onSubmit={handleSubmit}>
 
-                        <div className='flex justify-evenly'>
-                            <div className='w-1/2'>
-                                <input name='fname' onChange={handleInputChange} value={signupFormData.fname} type="text" placeholder='First Name' className='rounded-lg p-2 w-full mt-5 '/><br />
-                                <p className='text-red-600'>{errors.fname}</p> 
-                            </div>
-                            <div className='w-1/2'>
-                                <input name='lname' onChange={handleInputChange} value={signupFormData.lname} type="text" placeholder='Last Name' className='rounded-lg p-2 w-full mt-5 ml-1 '/>
-                                <p className='text-red-600'>{errors.lname}</p> 
-                            </div>
+                        <div className='mt-5'>
+                            <input name='fname' onChange={handleInputChange} value={signupFormData.fname} type="text" placeholder='Full Name' className='rounded-lg p-2  w-full '/><br />
+                            <p className='text-red-600'>{errors.fname}</p> 
                         </div>
+
                         <div className='mt-5 '>
+                            
                             <div>
                                 <input name='email' onChange={handleInputChange} value={signupFormData.email} type="text" placeholder='Email' className='rounded-lg p-2  w-full '/><br />
                                 <p className='text-red-600'>{errors.email}</p> 

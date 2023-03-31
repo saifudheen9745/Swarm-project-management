@@ -25,7 +25,7 @@ function UserRouter() {
           <Route exact path='/otp' element={<OtpLoginPage/>}/>
           <Route exact path='/home' element={<HomePage/>}/>
           <Route exact path='/resetpassword' element={<ResetPasswordPage/>}/>
-          <Route exact path='/error' element={<ErrorPage/>}/>
+          <Route exact path='/*' element={<ErrorPage/>}/>
           
         </Routes>
     </div>

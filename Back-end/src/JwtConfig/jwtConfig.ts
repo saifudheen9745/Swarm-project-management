@@ -1,90 +1,82 @@
+import { Request, Response } from "express";
+import { sign, verify } from "jsonwebtoken";
+import { authRepository } from "../Repostory/UserRepository/authRepository.service";
+import { jwtPayloadInterface } from "../Types/user.types";
 
-import { Request, Response } from 'express'
-import { sign,verify } from 'jsonwebtoken'
-import { json } from 'stream/consumers'
-import {userRegisterSchema} from '../Models/UserModels/authModel'
-import { authRepository } from '../Repostory/UserRepository/authRepository.service'
-import { jwtPayloadInterface } from '../Types/user.types'
+const authRepo = new authRepository();
 
-const authRepo = new authRepository()
-const {findUserById,setIsVerifiedTrue} = authRepo
-export class jwtOptions{
-    
-    async createJwtAccessToken(user:string){
-        try {
-            return sign({user},process.env.JWT_ACCESS_TOKEN_SECRET as string,{expiresIn:'15s'})
-        } catch (error) {
-            throw{error}
-        }
+export class jwtOptions {
+  // create access token with 30 seconds validity
+  createJwtAccessToken = async (user: string) =>
+    sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET as string, {
+      expiresIn: "30s",
+    });
+
+  // create confirm email link token with 1 minute validity
+  createConfirmLinkToken = async (user: string) =>
+    sign({ user }, process.env.CONFIRM_EMAIL_TOKEN as string, {
+      expiresIn: "1m",
+    });
+
+  // verify confirm email link token
+  verifyConfirmLinkToken = async (token: string, id: string) => {
+    const data: any = await verify(
+      token,
+      process.env.CONFIRM_EMAIL_TOKEN as string
+    );
+
+    // find user by id and set isVerified to true
+    const user = await authRepo.findUserById(data.user);
+    if (user?._id !== id) throw { msg: "invalid link" };
+    await authRepo.setIsVerifiedTrue(id);
+    return "Email verified successfully";
+  };
+
+  // create refresh token with 1 day validity
+  createJwtRefreshToken = async (user: jwtPayloadInterface) =>
+    sign({ user }, process.env.JWT_REFRESH_TOKEN_SECRET as string, {
+      expiresIn: "1d",
+    });
+
+  // middleware function to verify access token
+  verifyJwtToken = async (req: Request, res: Response, next: any) => {
+    const accessToken = req.headers["authorization"]?.split(" ")[1];
+
+    if (accessToken) {
+      try {
+        verify(
+          accessToken,
+          process.env.JWT_ACCESS_TOKEN_SECRET as string,
+          (err: any, data: any) => {
+            if (err) {
+              res.status(403).json({ msg: "forbidden" });
+            } else {
+              next();
+            }
+          }
+        );
+      } catch (error) {
+        throw { error };
+      }
     }
+  };
 
-    async createConfirmLinkToken(user:string){
-        try {
-            return sign({user},process.env.CONFIRM_EMAIL_TOKEN as string,{expiresIn:'1m'})
-        } catch (error) {
-            throw{error}
-        }
+  // create new access token using refresh token
+  createNewAccessToken = async (data: string) => {
+    if (!data) return "RefreshToken not found";
+    try {
+      const isValidToken: any = await verify(
+        data,
+        process.env.JWT_REFRESH_TOKEN_SECRET as string
+      );
+      const user = await authRepo.findUserById(isValidToken.user);
+      if (!user) return "Unauthorized";
+      const id: string = user?._id.toString();
+      return sign({ id }, process.env.JWT_ACCESS_TOKEN_SECRET as string, {
+        expiresIn: "30s",
+      });
+    } catch (error) {
+      throw { error };
     }
-
-    async verifyConfirmLinkToken(token:string,id:string){
-        try {
-            return await verify(token,process.env.CONFIRM_EMAIL_TOKEN as string, async function(err:any,data:any){
-                if(err){
-                    const error:any = await JSON.stringify(err)
-                    const {message} = JSON.parse(error)
-                    if(message == "invalid signature"){
-                        throw{msg:"Invalid Link"}
-                    }else{
-                        throw{msg:"Link expired"}
-                    } 
-                }
-                let details:any = await findUserById(data.user)
-                if(details._id != id) throw{msg:"invalid link"}
-                await setIsVerifiedTrue(id)
-                return "Email verified successfully"
-            })
-        } catch (error) {
-            throw{error}
-        }
-    }
-
-
-    async createJwtRefreshToken(user:jwtPayloadInterface){
-        try {
-            return sign({user},process.env.JWT_REFRESH_TOKEN_SECRET as string,{expiresIn:'1d'})
-        } catch (error) {
-            throw{error}
-        }
-    }
-
-    async verifyJwtToken(req:Request,res:Response,next:any){
-        if(req.cookies?.jwtAccessToken){
-            verify(req.cookies.jwtAccessToken,process.env.JWT_ACCESS_TOKEN_SECRET as string , async(err:any,data:any)=>{
-                if(err){
-                    res.status(403).json({msg:"expired"})
-                } else{
-                    next()
-                }
-                // const user = await authModel.findOne({_id:data.user})
-                // if(!user) console.log("unauthorized");
-            })
-        }
-    }
-
-    async createNewAccessToken(data:string){
-        try {
-            if(!data) return "RefreshToken not found"
-            const user:any = await verify(data,process.env.JWT_REFRESH_TOKEN_SECRET as string, async function(err:any,data:any){
-                if(err) return "forbidden" 
-                const user = await findUserById(data.user)
-                if(!user) return "Unauthorized"
-                const id:string = await user?._id.toString()
-                return sign({id},process.env.JWT_ACCESS_TOKEN_SECRET as string,{expiresIn:'15s'})
-            })  
-            return user
-        } catch (error) {
-            throw{error}
-        }
-        
-    }
+  };
 }

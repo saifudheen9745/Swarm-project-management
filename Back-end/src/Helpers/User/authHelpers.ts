@@ -28,7 +28,8 @@ const {
   saveOtpInDb,
   checkOtp,
   updatePasswordDb,
-  findUserByEmail
+  findUserByEmail,
+  findUserByNumber
 } = authRepo;
 
 export class authHelpers {
@@ -36,8 +37,9 @@ export class authHelpers {
 
   async doSignUp(regDetails: userRegInterface) {
     try {
-      if (regDetails.password)
+      if (regDetails.password){
         regDetails.password = await bcrypt.hash(regDetails.password, 10);
+      }
       return await registerUser(regDetails);
     } catch (error: any) {
       if (error.error.code === 11000) {
@@ -151,6 +153,14 @@ export class authHelpers {
   async getEmailWithId(userId:string){
     try {
       return await findUserById(userId)
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async getUserWithNumber(number:string){
+    try {
+      return await findUserByNumber(number)
     } catch (error) {
       throw{error}
     }

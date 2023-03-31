@@ -6,7 +6,7 @@ export class authRepository{
     async registerUser(regDetails:userRegInterface){
         try {
             let {fname,lname,email,mobile,password} = regDetails
-            mobile = `+91${mobile}`
+            if(mobile !== "" || null || undefined) mobile = `+91${mobile}`
             let userRegisteredAlready = await userRegisterSchema.find({email:email})
             if(userRegisteredAlready.length!=0){
                 return userRegisteredAlready[0]
@@ -22,7 +22,8 @@ export class authRepository{
             const {email,password} = reqDetails
             const userFound =  await userRegisterSchema.find({$or:[{email:{$eq:email}},{mobile:{$eq:email}}]})  
             if(userFound.length == 0) throw{msg:"Invalid credentials"}
-            const isValidUser:Boolean = await bcrypt.compare(password,userFound[0].password)
+            const passwordFromDb:any = userFound[0]?.password
+            const isValidUser:any = await bcrypt.compare(password,passwordFromDb)
             if(isValidUser){
                 if(!userFound[0].isVerified){
                     throw{msg:"Please verify email to login",userVerified:false}
@@ -54,11 +55,10 @@ export class authRepository{
         try {
             
             const user:any = await userRegisterSchema.findById({_id:id})
-            console.log(user);
             if(!user){
                 throw {msg: "Invalid Link" };
-            }else if(user?.isVerified){
-                throw {msg:"User already verified"}
+            // }else if(user?.isVerified){
+            //     throw {msg:"User already verified"}
             }else{
                 return user
             }
@@ -147,6 +147,21 @@ export class authRepository{
             }
             return {emailVerified:true}
         }catch(error){
+            throw{error}
+        }
+    }
+
+    async findUserByNumber(number:string){
+        try {
+            console.log(number);
+            
+            const user = await userRegisterSchema.find({mobile:number})
+            if(user.length === 0){
+                throw{msg:"Mobile is not registered"}
+            }else{
+                return user[0]
+            }
+        } catch (error) {
             throw{error}
         }
     }

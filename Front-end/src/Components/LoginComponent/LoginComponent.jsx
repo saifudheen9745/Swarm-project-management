@@ -8,11 +8,11 @@ import {ToastContainer} from 'react-toastify'
 import { invalidFormToast, invalidLoginCred, } from '../ToastifyAlerts/ToastifyAlerts'
 import { useNavigate } from 'react-router-dom'
 //Redux hooks
-import {useSelector,useDispatch} from 'react-redux'
-import {setAccessToken} from '../../Redux/Slices/authSlice'
+import {useDispatch} from 'react-redux'
+
 import {setDetails} from '../../Redux/Slices/userSlice'
 import userAuthentications from '../../Firebase/UserAuthentications'
-import swalAlerts from '../SwalAlerts/SwalAlerts'
+
 
 
 
@@ -37,8 +37,7 @@ function LoginComponent() {
         }
         try {
             const loginResponse = await doLogin(loginFormData)
-            dispatch(setAccessToken(loginResponse.accessToken))
-            dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email}))
+            dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email,accessToken:loginResponse.accessToken}))
             navigate('/test')
         } catch (error) {
             invalidLoginCred(error.msg)

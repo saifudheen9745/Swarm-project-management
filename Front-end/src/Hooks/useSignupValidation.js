@@ -54,8 +54,6 @@ const useSignupValidation = ()=>{
         }else if(name === 'fname'){
             if(containsNumber(value)) error = "Should only contains alphabets";
             if(!length(value)) error = "Should contain atleast 3 alphabets";
-        }else if(name === 'lname'){
-            if(containSpecialCharacters(value)) error = "No special characters allowed";
         }else if(name === 'email'){
             if(!isValidEmail(value)) error = "Invalid email address"
         }else if(name === 'mobile'){
@@ -85,12 +83,9 @@ const useSignupValidation = ()=>{
     const isValidForm = async(e)=>{
         e.preventDefault()
         let status = true
-        for(const key in signupFormData){
-            if(signupFormData[key].length == 0 || errors[key]!=undefined){
+            if(signupFormData["email"].length == 0 || errors["email"]!=undefined){
                 status = false
-                break;
             }
-        }
         if(signupFormData.password !== signupFormData.cnfpassword) status = false 
         return status
     }

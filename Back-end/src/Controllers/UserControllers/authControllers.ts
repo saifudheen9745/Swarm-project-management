@@ -22,6 +22,7 @@ const {
   updatePassword,
   checkEmailValidity,
   getEmailWithId,
+  getUserWithNumber,
 } = userAuthHelpers;
 
 export const userRegistration = async (req: Request, res: Response) => {
@@ -53,15 +54,13 @@ export const userRegistrationWithGoogle = async (
       response._id.toString()
     );
     res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
-    //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
-    res
-      .status(200)
-      .json({
-        accessToken,
-        userId: response._id.toString(),
-        name: response.displayName,
-        email: response.email,
-      });
+
+    res.status(200).json({
+      accessToken,
+      userId: response._id.toString(),
+      name: response.displayName,
+      email: response.email,
+    });
   } catch (error) {
     res.status(401).json(error);
   }
@@ -73,15 +72,23 @@ export const userLogin = async (req: Request, res: Response) => {
     const accessToken: string = await createJwtAccessToken(
       response._id.toString()
     );
+
     const refreshToken: string = await createJwtRefreshToken(
       response._id.toString()
     );
-    res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
-    //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
+    res.cookie("jwtAccessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+    res.cookie("jwtRefreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
     res.status(200).json({
       accessToken,
       userId: response._id.toString(),
-      name: response.fname + response.lname,
+      name: response.fname,
       email: response.email,
     });
   } catch (error: any) {
@@ -98,12 +105,15 @@ export const userLoginWithGoogle = async (req: Request, res: Response) => {
     const refreshToken: string = await createJwtRefreshToken(
       response._id.toString()
     );
-    res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
+    res.cookie("jwtRefreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
     //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
     res.status(200).json({
       accessToken,
       userId: response._id.toString(),
-      name: response.fname + response.lname,
+      name: response.fname,
       email: response.email,
     });
   } catch (error) {
@@ -116,8 +126,8 @@ export const getNewAcessToken = async (req: Request, res: Response) => {
     let newAccessToken = await createNewAccessToken(
       req.cookies.jwtRefreshToken
     );
-    res.cookie("jwtAccessToken", newAccessToken, { httpOnly: true });
-    res.status(200).json({ newAccessToken });
+   
+    res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
     res.status(401).json(error);
   }
@@ -126,10 +136,9 @@ export const getNewAcessToken = async (req: Request, res: Response) => {
 export const emailVerification = async (req: Request, res: Response) => {
   try {
     const response = await verifyEmail(req.body.id, req.body.token);
+
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
-    
     res.status(401).json(error);
   }
 };
@@ -143,12 +152,15 @@ export const createTokenForOtpAuth = async (req: Request, res: Response) => {
     const refreshToken: string = await createJwtRefreshToken(
       response._id.toString()
     );
-    res.cookie("jwtRefreshToken", refreshToken, { httpOnly: true });
+    res.cookie("jwtRefreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
     // res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
     res.status(200).json({
       accessToken,
       userId: response._id.toString(),
-      name: response.fname + response.lname,
+      name: response.fname,
       email: response.email,
     });
   } catch (error) {
@@ -205,6 +217,17 @@ export const resentConfirmationMail = async (req: Request, res: Response) => {
       res.status(200).json({ Mail: mailResponse });
     }
   } catch (error) {
-    res.status(401).json(error)
+    res.status(401).json(error);
+  }
+};
+
+export const checkIsValidNumber = async (req: Request, res: Response) => {
+  try {
+    const response: any = await getUserWithNumber(req.body.number);
+    res.status(200).json({ numberVerified: true, user: response });
+  } catch (error) {
+    console.log(error);
+
+    res.status(401).json(error);
   }
 };

@@ -4,7 +4,6 @@ import { signInWithPopup } from 'firebase/auth' //for google auth
 import {RecaptchaVerifier,signInWithPhoneNumber } from "firebase/auth"; //for otp auth
 //Redux
 import {useDispatch} from 'react-redux'
-import {setAccessToken} from '../Redux/Slices/authSlice'
 import {setDetails} from '../Redux/Slices/userSlice'
 //Toastify Error
 import { invalidRegisterCred } from "../Components/ToastifyAlerts/ToastifyAlerts"
@@ -23,8 +22,7 @@ const userAuthentications = ()=>{
             try {
                 const {displayName,email} = data.user
                 const response = await doRgisterWithGoogle({displayName,email})//api call to backend
-                dispatch(setAccessToken(response.accessToken))//Storing details in redux
-                dispatch(setDetails({name:response.name,email:response.email}))//Storing details in redux
+                dispatch(setDetails({name:response.name,email:response.email,accessToken:response.accessToken}))//Storing details in redux
                 navigate('/test')
             } catch (error) {
                 invalidRegisterCred(error)
@@ -38,8 +36,7 @@ const userAuthentications = ()=>{
             try {
                 const {email} = data.user
                 const response = await doSignInWithGoogle({email})//api call to backend
-                dispatch(setAccessToken(response.accessToken))//Storing details in redux
-                dispatch(setDetails({userId:response.userId,name:response.name,email:response.email}))//Storing details in redux
+                dispatch(setDetails({userId:response.userId,name:response.name,email:response.email,accessToken:response.accessToken}))//Storing details in redux
                 navigate('/test')
             } catch (error) {
                 invalidRegisterCred(error)

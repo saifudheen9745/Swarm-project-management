@@ -4,11 +4,6 @@ import validator from 'validator'
 const userRegSchema = new mongoose.Schema({
     fname: {
         type: String,
-        required: true,
-    },
-    lname: {
-        type: String,
-        required: true,
     },
     email: {
         type: String,
@@ -20,7 +15,6 @@ const userRegSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true,
         unique: true,
         // validate: [
         //     {
@@ -33,7 +27,6 @@ const userRegSchema = new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
     },
     isActive:{
         type:Boolean,
