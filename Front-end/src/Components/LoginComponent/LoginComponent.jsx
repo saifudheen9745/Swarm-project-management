@@ -37,7 +37,9 @@ function LoginComponent() {
         }
         try {
             const loginResponse = await doLogin(loginFormData)
-            dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email,accessToken:loginResponse.accessToken}))
+            const {userId,name,email,accessToken} = loginResponse
+            console.log(userId,name,email,accessToken);
+            dispatch(setDetails({userId,name,email,accessToken}))
             navigate('/test')
         } catch (error) {
             invalidLoginCred(error.msg)

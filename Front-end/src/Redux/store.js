@@ -19,6 +19,6 @@ export const store = configureStore({
     reducer:{
         persistedReducer
     },
-    middleware:[logger],
+    middleware:[],
     
 })

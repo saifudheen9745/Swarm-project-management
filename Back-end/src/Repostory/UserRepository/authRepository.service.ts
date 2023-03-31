@@ -1,4 +1,4 @@
-import {userGoogleSchema, userOtpSchema, userRegisterSchema} from "../../Models/UserModels/authModel";
+import { userOtpSchema, userRegisterSchema} from "../../Models/UserModels/authModel";
 import { updatePasswordDetails, userGoogleLoginInterface, userGoogleRegInterface, userLoginInterface, userRegInterface } from "../../Types/user.types";
 import bcrypt from 'bcrypt'
 
@@ -86,7 +86,7 @@ export class authRepository{
             if(duplicateUser.length != 0){
                 throw{msg:"This email is already registered, Please use another email"}
             }else{
-                return await userGoogleSchema.create({displayName,email})
+                return await userRegisterSchema.create({displayName,email})
             } 
         }catch(error){
             throw{error}
@@ -95,7 +95,7 @@ export class authRepository{
 
     async loginGoogleUser({email}:userGoogleLoginInterface){
         try {
-            const user = await userGoogleSchema.find({email:email})
+            const user = await userRegisterSchema.find({email:email})
             if(user.length == 0 ){
                 throw{msg:"Please register with google first"}
             }

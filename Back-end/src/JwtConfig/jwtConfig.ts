@@ -41,7 +41,8 @@ export class jwtOptions {
   // middleware function to verify access token
   verifyJwtToken = async (req: Request, res: Response, next: any) => {
     const accessToken = req.headers["authorization"]?.split(" ")[1];
-
+    console.log(accessToken);
+    
     if (accessToken) {
       try {
         verify(
@@ -56,6 +57,8 @@ export class jwtOptions {
           }
         );
       } catch (error) {
+        console.log(error);
+        
         throw { error };
       }
     }

@@ -78,11 +78,12 @@ export const userLogin = async (req: Request, res: Response) => {
     );
     res.cookie("jwtAccessToken", accessToken, {
       httpOnly: true,
-      sameSite: "strict",
+      //sameSite: "strict",
     });
     res.cookie("jwtRefreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
+      //sameSite: "strict",
+    
     });
 
     res.status(200).json({

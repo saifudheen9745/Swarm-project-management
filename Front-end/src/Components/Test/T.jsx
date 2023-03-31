@@ -6,6 +6,7 @@ import { userReducer } from "../../Redux/Slices/userSlice";
 
 function T() {
   let a = useSelector(userReducer);
+  console.log("from test",a);
   const [sample,setSample] = useState('noData')
   const { check,createNewAccessToken } = apiCall();
   const handleTestButton = async () => {
