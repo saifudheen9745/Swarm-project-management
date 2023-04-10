@@ -15,7 +15,7 @@ export class jwtOptions {
   // create confirm email link token with 1 minute validity
   createConfirmLinkToken = async (user: string) =>
     sign({ user }, process.env.CONFIRM_EMAIL_TOKEN as string, {
-      expiresIn: "1m",
+      expiresIn: "2m",
     });
 
   // verify confirm email link token
@@ -27,9 +27,11 @@ export class jwtOptions {
 
     // find user by id and set isVerified to true
     const user = await authRepo.findUserById(data.user);
-    if (user?._id !== id) throw { msg: "invalid link" };
+    console.log(user._id ,"=", id);
+    
+    if (user?._id.toString() !== id) throw { msg: "invalid link" };
     await authRepo.setIsVerifiedTrue(id);
-    return "Email verified successfully";
+    return user;
   };
 
   // create refresh token with 1 day validity
@@ -52,6 +54,7 @@ export class jwtOptions {
             if (err) {
               res.status(403).json({ msg: "forbidden" });
             } else {
+
               next();
             }
           }

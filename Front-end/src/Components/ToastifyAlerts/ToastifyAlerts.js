@@ -14,6 +14,19 @@ export const invalidFormToast = ()=>{
   });
 }
 
+export const invalidProjectForm = (string)=>{
+  toast.error(string, {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+  });
+}
+
 export const invalidRegisterCred = (string)=>{
   toast.error(string.msg, {
     position: "top-right",

@@ -5,10 +5,15 @@ import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AiOutlineUser, AiOutlineHeart } from "react-icons/ai";
 import { FiMessageSquare, FiFolder, FiShoppingCart } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import MobileNav from "../../MobileNav/MobileNav";
+import { AiOutlineLogout } from "react-icons/ai";
+import { Link, useNavigate } from "react-router-dom";
+import MobileNav from "../MobileNav/MobileNav";
+import { resetDetails } from "../../Redux/Slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const AsideNavbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const menus = [
     { name: "dashboard", link: "/", icon: MdOutlineDashboard },
     { name: "user", link: "/", icon: AiOutlineUser },
@@ -20,6 +25,14 @@ const AsideNavbar = () => {
     { name: "Setting", link: "/", icon: RiSettings4Line },
   ];
   const [open, setOpen] = useState(true);
+
+  const handleLogout = async () => {
+    localStorage.clear();
+    dispatch(resetDetails());
+    window.location.reload()
+    navigate("/login");
+  };
+
   return (
     <div>
       <section className="md:flex gap-6 hidden">
@@ -65,11 +78,35 @@ const AsideNavbar = () => {
                 </h2>
               </Link>
             ))}
+            <div
+              onClick={handleLogout}
+              className={`hover:text-red-900 group flex items-center text-sm hover:cursor-pointer gap-3.5 font-medium p-2 hover:bg-gray-300 hover:dark:bg-gray-500 rounded-md`}
+              style={{overflow:"hidden"}}
+            >
+              <div><AiOutlineLogout className="text-lg"/></div>
+              <h2
+                style={{
+                  transitionDelay: `100ms`,
+                }}
+                className={`whitespace-pre duration-300 ${
+                  !open && "opacity-0 translate-x-28 overflow-hidden"
+                }`}
+              >
+                Logout
+              </h2>
+              <h2
+                className={`${
+                  open && "hidden"
+                } absolute left-48 bg-white font-semibold whitespace-pre  text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit  `}
+              >
+                Logout
+              </h2>
+            </div>
           </div>
         </div>
       </section>
       <div className="block md:hidden">
-        <MobileNav/>
+        <MobileNav />
       </div>
     </div>
   );

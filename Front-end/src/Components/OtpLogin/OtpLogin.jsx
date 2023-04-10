@@ -82,7 +82,7 @@ function OtpLogin() {
       try {
         const loginResponse = await createJwtToken({mobile:number})
         dispatch(setDetails({userId:loginResponse.userId,name:loginResponse.name,email:loginResponse.email,accesToken:loginResponse.accessToken}))
-        navigate('/test')
+        navigate('/home')
       } catch (error) {
           invalidLoginCred(error.msg)
       }

@@ -28,7 +28,7 @@ export interface linkInterface{
 }
 
 export interface userGoogleRegInterface{
-    displayName:string,
+    fname:string,
     email:string
 }
 

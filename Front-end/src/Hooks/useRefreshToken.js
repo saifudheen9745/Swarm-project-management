@@ -5,7 +5,6 @@ import { setDetails } from "../Redux/Slices/userSlice";
 function useRefreshToken() {
   const dispatch = useDispatch();
   const refresh = async () => {
-    console.log("inside refresh");
     try {
       const response = await auth.get("/token");
       const accessToken = response.data.accessToken;

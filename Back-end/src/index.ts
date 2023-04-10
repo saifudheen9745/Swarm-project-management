@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Application } from "express";
 import dotenv from 'dotenv'
 import cors from 'cors'
 import morgan from "morgan";
@@ -6,8 +6,10 @@ import bodyParser from 'body-parser'
 import cookieParser from "cookie-parser";
 import { ConnectToDatabase } from "./Connection/connection";
 import authRoute from './Routes/UserRoutes/authRoute'
+import projectRoute from './Routes/UserRoutes/projectRoute'
+import workspaceRoute from './Routes/UserRoutes/workspaceRoute'
 
-const app = express()
+const app:Application = express()
 
 /*--------DB-Connection-------------*/
 ConnectToDatabase()
@@ -28,7 +30,8 @@ app.use(express.static('./src/Public'))
 /*---------Routing Middlewares--------*/
 
 app.use('/',authRoute)
-
+app.use('/project',projectRoute)
+app.use('/workspace',workspaceRoute)
 
 /*--------Server Running--------------*/
 

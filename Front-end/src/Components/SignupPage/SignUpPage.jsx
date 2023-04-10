@@ -37,6 +37,7 @@ function SignUpPage() {
             console.log(signupResponse);
             successRegistration()
         } catch (error) {
+            console.log(error);
             invalidRegisterCred(error)
         }
         

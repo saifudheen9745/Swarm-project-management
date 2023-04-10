@@ -21,9 +21,9 @@ const userAuthentications = ()=>{
         signInWithPopup(auth,provider).then(async(data)=>{
             try {
                 const {displayName,email} = data.user
-                const response = await doRgisterWithGoogle({displayName,email})//api call to backend
-                dispatch(setDetails({name:response.name,email:response.email,accessToken:response.accessToken}))//Storing details in redux
-                navigate('/test')
+                const response = await doRgisterWithGoogle({fname:displayName,email})//api call to backend
+                dispatch(setDetails({name:response.name,email:response.email,accessToken:response.accessToken,userId:response.userId}))//Storing details in redux
+                navigate('/home')
             } catch (error) {
                 invalidRegisterCred(error)
             }
@@ -37,7 +37,7 @@ const userAuthentications = ()=>{
                 const {email} = data.user
                 const response = await doSignInWithGoogle({email})//api call to backend
                 dispatch(setDetails({userId:response.userId,name:response.name,email:response.email,accessToken:response.accessToken}))//Storing details in redux
-                navigate('/test')
+                navigate('/home')
             } catch (error) {
                 invalidRegisterCred(error)
             }

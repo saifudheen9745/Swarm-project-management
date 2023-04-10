@@ -28,7 +28,6 @@ function useAxiosPrivate() {
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
-        console.log(prevRequest);
         if (error.response.status === 403 && !prevRequest.sent ) {
           prevRequest.sent = true;
           const newAccessToken = await refresh();
@@ -43,6 +42,7 @@ function useAxiosPrivate() {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
+    
   }, [accessToken, refresh]);
 
   return axiosPrivate;

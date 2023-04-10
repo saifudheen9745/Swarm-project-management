@@ -5,7 +5,6 @@ const useSignupValidation = ()=>{
 
     const [errors,setErrors] = useState({
         fname:"",
-        lname:"",
         email:"",
         mobile:"",
         password:"",
@@ -14,7 +13,6 @@ const useSignupValidation = ()=>{
 
     const [signupFormData,setSignupFormData] = useState({
         fname:'',
-        lname:'',
         email:'',
         mobile:'',
         password:'',
@@ -60,7 +58,6 @@ const useSignupValidation = ()=>{
             if(!isValidMobile(value)) error = "Invalid mobile number"
         }else if(name === 'password'){
             ClipboardEvent
-            
             if(!passLength(value)) error = "Should contain atlest 6 character"
         }else if(name === 'cnfpassword'){
             if(signupFormData.password !== value) error = "Password does not match"
@@ -83,10 +80,14 @@ const useSignupValidation = ()=>{
     const isValidForm = async(e)=>{
         e.preventDefault()
         let status = true
-            if(signupFormData["email"].length == 0 || errors["email"]!=undefined){
-                status = false
+            for(const keys in errors){
+                console.log(signupFormData[keys],errors[keys]);
+                if(signupFormData[keys].length == 0 || errors[keys]!=undefined){
+                    status = false
+                }
             }
         if(signupFormData.password !== signupFormData.cnfpassword) status = false 
+        console.log(status);
         return status
     }
 

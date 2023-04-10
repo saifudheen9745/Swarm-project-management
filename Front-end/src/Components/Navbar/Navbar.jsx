@@ -1,19 +1,33 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsSunFill, BsFillMoonFill } from "react-icons/bs";
 import { useEffect } from "react";
+import {BiMessageSquareAdd} from 'react-icons/bi'
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme, themeReducer } from "../../Redux/Slices/themeSlice";
+import { resetDetails } from "../../Redux/Slices/userSlice";
 
 
 function Navbar() {
-  const [dark, setDark] = useState(true);
- 
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [hamBurger,setHamBurger] = useState({
+    mainMenu : false
+  })
+
+  const theme = useSelector(themeReducer)
+
   useEffect(() => {
-    if (dark) {
+    if (theme.dark) {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, [dark]);
+  }, [theme.dark]);
+
+  const handleThemeButton = async()=>{
+    dispatch(toggleTheme())
+  }
 
   return (
     <div>
@@ -30,26 +44,35 @@ function Navbar() {
             </span>
           </Link>
           <div className="flex md:order-2 gap-4">
-            <div className="bg-gray-700 rounded-lg mt-0.5 hover:cursor-pointer h-9 w-9 flex justify-center items-center">
-              {dark ? (
+            <div className="bg-gray-700 rounded-lg mt-0.5 hover:cursor-pointer h-9 w-9 flex justify-center items-center" onClick={handleThemeButton}>
+              {theme.dark ? (
                 <BsSunFill
-                  onClick={() => setDark(!dark)}
+                  
                   className="text-white"
                 />
               ) : (
                 <BsFillMoonFill
-                  onClick={() => setDark(!dark)}
                   className="text-white"
                 />
               )}
             </div>
-            <button
+            <div>
+              <button className="bg-red-900  text-white" onClick={()=>{
+                localStorage.clear()
+                dispatch(resetDetails())
+                navigate('/login')
+              }}>Logout</button>
+            </div>
+            <Link
               type="button"
-              className="hidden md:block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="hidden md:flex text-white gap-1 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-green-700 dark:hover:bg-green-900 dark:focus:ring-green-800"
+              to={'/project/create'}
             >
-              Get started
-            </button>
+              <BiMessageSquareAdd className="text-xl"/>
+              Create
+            </Link>
             <button
+            onClick={()=>setHamBurger({mainMenu: !hamBurger.mainMenu})}
               data-collapse-toggle="navbar-sticky"
               type="button"
               className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -67,43 +90,34 @@ function Navbar() {
                 <path
                   fillRule="evenodd"
                   d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
             </button>
           </div>
           <div
-            className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-            id="navbar-sticky"
-          >
+            className={ `items-center justify-between  w-11/12 md:flex md:w-auto md:order-1 z-10 fixed md:static top-14  ${hamBurger.mainMenu ? 'block' :'hidden'}`} 
+            id="navbar-sticky">
             <ul className="flex flex-col p-4 mt-4 border border-white rounded-lg bg-white md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-              <li>
-                <button
-                  type="button"
-                  className="md:hidden text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  Get started
-                </button>
-              </li>
+              
               <li>
                 <Link
-                  className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
-                  aria-current="page"
+                  className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >
                   Home
                 </Link>
               </li>
-              <li>
+              <li >
                 <Link className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
                   About
                 </Link>
               </li>
-              <li>
+              <li >
                 <Link className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
                   Services
                 </Link>
               </li>
-              <li>
+              <li >
                 <linLink className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
                   Contact
                 </linLink>

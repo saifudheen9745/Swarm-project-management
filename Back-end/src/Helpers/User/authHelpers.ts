@@ -23,6 +23,7 @@ const {
   loginUser,
   loginUserWithNumber,
   findUserById,
+  findUserByIdForEmailVerification,
   registerGoogleUser,
   loginGoogleUser,
   saveOtpInDb,
@@ -103,9 +104,11 @@ export class authHelpers {
 
   async verifyEmail(id: string, token: string) {
     try {
-      const user = await findUserById(id);
+      const user = await findUserByIdForEmailVerification(id);
       return await verifyConfirmLinkToken(token, user.id);
     } catch (error) {
+      console.log(error);
+      
       throw { error };
     }
   }

@@ -40,9 +40,43 @@ const swalAlerts = () => {
       }
     });
   }
+
+  const emailSentSuccessfully = (email) => {
+    Swal.fire({
+      title: "Invitation sent successfully",
+      icon: "success",
+      height: "200",
+      width: "300",
+      confirmButtonText: "Resent verify mail",
+      allowOutsideClick: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        
+        // Redirect to login page
+        navigate("/login");
+      }
+    });
+  }
+
+  const projectCreationSuccess = (email) => {
+    Swal.fire({
+      title: "Project created successfully",
+      icon: "success",
+      height: "200",
+      width: "300",
+      confirmButtonText: "Go to home",
+      allowOutsideClick: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        
+        // Redirect to login page
+        navigate("/home");
+      }
+    });
+  }
   
 
-  return { successRegistration, verifyEmailSwal };
+  return { successRegistration, verifyEmailSwal, emailSentSuccessfully, projectCreationSuccess };
 };
 
 export default swalAlerts;

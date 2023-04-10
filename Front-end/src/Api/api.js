@@ -9,7 +9,7 @@ const apiCall = () => {
       const response = await auth.post("/register", signupFormData);
       return response.data;
     } catch (error) {
-      throw { msg: error.response.data.message };
+      throw { msg: error.response.data.error.error.msg };
     }
   };
 
@@ -44,6 +44,7 @@ const apiCall = () => {
   const verifyMail = async (urlData) => {
     try {
       const response = await auth.post("/confirmation", urlData);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw { msg: error.response.data.error.error };
