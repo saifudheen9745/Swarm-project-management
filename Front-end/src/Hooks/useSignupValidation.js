@@ -81,13 +81,11 @@ const useSignupValidation = ()=>{
         e.preventDefault()
         let status = true
             for(const keys in errors){
-                console.log(signupFormData[keys],errors[keys]);
                 if(signupFormData[keys].length == 0 || errors[keys]!=undefined){
                     status = false
                 }
             }
         if(signupFormData.password !== signupFormData.cnfpassword) status = false 
-        console.log(status);
         return status
     }
 

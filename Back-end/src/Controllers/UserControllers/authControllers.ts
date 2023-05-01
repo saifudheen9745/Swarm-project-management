@@ -23,6 +23,9 @@ const {
   checkEmailValidity,
   getEmailWithId,
   getUserWithNumber,
+  getUserDetailsWithId,
+  editUserDetailsHelpers,
+  updateUserPasswordHelper
 } = userAuthHelpers;
 
 export const userRegistration = async (req: Request, res: Response) => {
@@ -60,7 +63,7 @@ export const userRegistrationWithGoogle = async (
     res.status(200).json({
       accessToken,
       userId: response._id.toString(),
-      name: response.displayName,
+      name: response.fname,
       email: response.email,
     });
   } catch (error) {
@@ -83,7 +86,6 @@ export const userLogin = async (req: Request, res: Response) => {
     
     res.cookie("jwtRefreshToken", refreshToken, {
       httpOnly: true,
-      //sameSite: "strict",
     
     });
 
@@ -111,7 +113,7 @@ export const userLoginWithGoogle = async (req: Request, res: Response) => {
     );
     res.cookie("jwtRefreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
+
     });
     //res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
     res.status(200).json({
@@ -176,7 +178,6 @@ export const createTokenForOtpAuth = async (req: Request, res: Response) => {
     );
     res.cookie("jwtRefreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
     });
     // res.cookie("jwtAccessToken",accessToken,{httpOnly:false})
     res.status(200).json({
@@ -253,3 +254,30 @@ export const checkIsValidNumber = async (req: Request, res: Response) => {
     res.status(401).json(error);
   }
 };
+
+export const getUserDetails = async (req: Request, res: Response)=>{
+  try {
+    const dbResponse = await getUserDetailsWithId(req.params.userId)
+    res.status(200).json(dbResponse)
+  } catch (error) {
+    res.status(401).json(error)
+  }
+}
+
+export const editUserDetails = async (req: Request, res: Response)=>{
+  try {
+    const dbResponse = await editUserDetailsHelpers(req.body.userDetails)
+    res.status(200).json({updated:true})
+  } catch (error) {
+    res.status(401).json(error)
+  }
+}
+
+export const updateUserPasswordWithoutOtp = async(req: Request, res: Response)=>{
+  try {
+    const dbResponse = await updateUserPasswordHelper(req.body.passDetails)
+    res.status(200).json({updated:true})
+  } catch (error) {
+    res.status(401).json(error)
+  }
+}

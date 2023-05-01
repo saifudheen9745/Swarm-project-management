@@ -16,15 +16,14 @@ const userRegSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        unique: true,
-        validate: [
-            {
-                validator: function (value: string) {
-                    return /^\d{10}$/.test(value);
-                },
-                message: "Invalid mobile number",
-            },
-        ]
+        // validate: [
+        //     {
+        //         validator: function (value: string) {
+        //             return /^\d{10}$/.test(value);
+        //         },
+        //         message: "Invalid mobile number",
+        //     },
+        // ]
     },
     password:{
         required:true,
@@ -61,6 +60,10 @@ const googleSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
         validate: [validator.isEmail, "Invalid Email"],
+    },
+    isVerified:{
+        type:Boolean,
+        default:true
     }
 })
 

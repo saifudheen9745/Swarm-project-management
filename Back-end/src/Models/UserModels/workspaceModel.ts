@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const workspaceSchema = new mongoose.Schema({
     name:{
@@ -11,7 +11,7 @@ const workspaceSchema = new mongoose.Schema({
         required:true
     },
     master:{
-        type:String,
+        type:Types.ObjectId,
         required:true
     },
     members:{

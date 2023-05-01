@@ -8,7 +8,7 @@ import { privateApi } from '../../Api/axiosPrivateInstance'
 const useChecking = async()=>{
     
     const gettoken = async()=>{
-        console.log("hello");
+
         const response = await axios.post('http://localhost:3000/checking')
         //console.log(response.data);
         return response.data

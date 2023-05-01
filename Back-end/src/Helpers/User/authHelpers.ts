@@ -30,7 +30,10 @@ const {
   checkOtp,
   updatePasswordDb,
   findUserByEmail,
-  findUserByNumber
+  findUserByNumber,
+  getUserDetailsFromDb,
+  editUserDetailsInDb,
+  updateUserPassInDb
 } = authRepo;
 
 export class authHelpers {
@@ -164,6 +167,38 @@ export class authHelpers {
   async getUserWithNumber(number:string){
     try {
       return await findUserByNumber(number)
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async getUserDetailsWithId(userId:string){
+    try {
+      return await getUserDetailsFromDb(userId)
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async editUserDetailsHelpers(userDetails:any){
+    try {
+      return await editUserDetailsInDb(userDetails)
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async updateUserPasswordHelper(passDetails:any){
+    try {
+      const userDetails = await findUserById(passDetails.userId)
+      if(userDetails.password){
+        const isValidUser: any = await bcrypt.compare(passDetails.currentPass, userDetails.password);
+        if(!isValidUser){
+          throw{msg:"Incorrect current password"}
+        }
+      }
+      passDetails.newPass = await bcrypt.hash(passDetails.newPass, 10);
+      return await updateUserPassInDb(passDetails)
     } catch (error) {
       throw{error}
     }

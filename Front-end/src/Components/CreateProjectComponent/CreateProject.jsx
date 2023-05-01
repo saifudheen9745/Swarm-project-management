@@ -11,7 +11,7 @@ function CreateProject() {
   const dark = useSelector(themeReducer);
   const [color, setColor] = useState("#000000");
   const [toggle, setToggle] = useState("Statistics");
-  console.log(toggle);
+
   const handleColorChange = (newColor) => {
     setColor(newColor);
   };

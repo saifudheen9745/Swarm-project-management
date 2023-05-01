@@ -3,7 +3,9 @@ import encrypt from '../../encryption/crypto';
 
 const {encryptEmail} =  encrypt()
 
-export const sentMail = async(email:Array<string>,workspaceId:string) =>{
+export const sentMail = async(email:any,workspaceId:string) =>{
+
+  
     try {
         const transporter = NodeMailer.createTransport({
             host:process.env.HOST,
@@ -16,10 +18,10 @@ export const sentMail = async(email:Array<string>,workspaceId:string) =>{
             }
         })
         for(let i= 0 ; i < email.length; i++){
-          const encryptedEmail = await encryptEmail(email[i])
+          const encryptedEmail = await encryptEmail(email[i].email)
           await transporter.sendMail({
             from:process.env.USER,
-            to:email[i],
+            to:email[i].email,
             subject:"Swarm service confirmation mail",
             html:`
             <!DOCTYPE html>
@@ -79,7 +81,7 @@ export const sentMail = async(email:Array<string>,workspaceId:string) =>{
                   <p>You have been invited to join our workspace. To accept or decline the invitation, please click the appropriate button below.</p>
                   <div>
                   <a class="button accept" href="${process.env.BASE_URL}/verifyworkspaceinvitation/${workspaceId}/${encryptedEmail}/accepted">Accept</a>
-                  <a class="button decline" href="http://localhost:3000/${workspaceId}/${encryptedEmail}/declined">Decline</a>
+                  <a class="button decline" href="http://localhost:3000/workspace/verifyinvitationmail/${workspaceId}/${encryptedEmail}/declined">Decline</a>
                   </div>
                 </div>
               </body>

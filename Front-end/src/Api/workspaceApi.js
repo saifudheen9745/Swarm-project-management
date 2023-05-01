@@ -11,17 +11,25 @@ const workspaceApi = () => {
     }
   };
 
-  const getWorkspaces = async (userId) => {
+  const getWorkspaces = async (userId,email) => {
     try {
-        return await axiosPrivate.get(`/workspace/${userId}`)
+        return await axiosPrivate.post(`/workspace`,{userId,email})
     } catch (error) {
         throw{error}
     }
   }
 
+  const getSelectedWorkspace = async(workspaceId)=>{
+    try {
+      return await axiosPrivate.get(`/workspace/selectedone/${workspaceId}`)
+    } catch (error) {
+      throw{error}
+    }
+  }
+
   const sentVerificationMailToMembers = async(userEmails,workspaceId) => {
     try {
-      console.log(userEmails);
+      console.log(userEmails,workspaceId);
       return await axiosPrivate.post('/workspace/sentverifymail',{userEmails,workspaceId},)
     } catch (error) {
       throw{error}
@@ -39,7 +47,7 @@ const workspaceApi = () => {
   }
   
 
-  return { createWorkspace, getWorkspaces, sentVerificationMailToMembers, verifyWorkspaceInvitationMail };
+  return { createWorkspace, getWorkspaces, sentVerificationMailToMembers, verifyWorkspaceInvitationMail, getSelectedWorkspace };
 };
 
 export default workspaceApi;

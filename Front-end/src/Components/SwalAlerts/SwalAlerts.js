@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import apiCall from "../../Api/api";
 
 const swalAlerts = () => {
-  const {resendVerifyMail} = apiCall()
+  const { resendVerifyMail } = apiCall();
   const navigate = useNavigate();
   const successRegistration = () => {
     Swal.fire({
@@ -31,15 +31,22 @@ const swalAlerts = () => {
       height: "200",
       width: "300",
       confirmButtonText: "Resent verify mail",
-      allowOutsideClick: true
+      allowOutsideClick: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        
         // Redirect to login page
         navigate("/login");
       }
     });
-  }
+  };
+
+  const successAlert = (data, heading) => {
+    Swal.fire({
+      icon: "success",
+      title: `${heading}`,
+      text: `${data}`,
+    });
+  };
 
   const emailSentSuccessfully = (email) => {
     Swal.fire({
@@ -47,16 +54,15 @@ const swalAlerts = () => {
       icon: "success",
       height: "200",
       width: "300",
-      confirmButtonText: "Resent verify mail",
-      allowOutsideClick: true
+      confirmButtonText: "Close",
+      allowOutsideClick: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        
         // Redirect to login page
         navigate("/login");
       }
     });
-  }
+  };
 
   const projectCreationSuccess = (email) => {
     Swal.fire({
@@ -65,18 +71,39 @@ const swalAlerts = () => {
       height: "200",
       width: "300",
       confirmButtonText: "Go to home",
-      allowOutsideClick: true
+      allowOutsideClick: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        
         // Redirect to login page
         navigate("/home");
       }
     });
-  }
-  
+  };
 
-  return { successRegistration, verifyEmailSwal, emailSentSuccessfully, projectCreationSuccess };
+  const deleteConfirmation = (deleteTask,taskId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteTask(taskId)
+      }
+    })
+  };
+
+  return {
+    deleteConfirmation,
+    successRegistration,
+    verifyEmailSwal,
+    emailSentSuccessfully,
+    projectCreationSuccess,
+    successAlert,
+  };
 };
 
 export default swalAlerts;

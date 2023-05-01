@@ -10,8 +10,9 @@ import ModalLoader from "../ModalLoader/ModalLoader";
 function AddMembersToWorkspace(props) {
   const {emailSentSuccessfully} = swalAlerts()
   const { sentVerificationMailToMembers } = workspaceApi();
-  const { userId } = useSelector(userReducer);
+
   const [showModal, setShowModal] = useState(false);
+
   const [loader,setLoader] = useState(false)
   const {data} = props
   const handleSubmit =async(tags) => {
@@ -57,7 +58,7 @@ function AddMembersToWorkspace(props) {
                 {/*body*/}
                 <div className="relative p-6 flex-auto ">
                   <div
-                    className={`p-4  rounded-lg md:p-8 dark:bg-gray-800  overflow-hidden bg-red-500`}
+                    className={`p-4  rounded-lg md:p-8 dark:bg-gray-800  overflow-hidden`}
                     id="enlist"
                     role="tabpanel"
                     aria-labelledby="faq-tab"

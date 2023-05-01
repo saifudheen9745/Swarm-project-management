@@ -15,10 +15,10 @@ const AsideNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const menus = [
-    { name: "dashboard", link: "/", icon: MdOutlineDashboard },
-    { name: "user", link: "/", icon: AiOutlineUser },
-    { name: "messages", link: "/", icon: FiMessageSquare },
-    { name: "analytics", link: "/", icon: TbReportAnalytics, margin: true },
+    { name: "home", link: "/home", icon: MdOutlineDashboard },
+    { name: "user", link: "/account", icon: AiOutlineUser },
+    { name: "messages", link: "/chat", icon: FiMessageSquare },
+    { name: "Workspace", link: "/workspace", icon: TbReportAnalytics, margin: true },
     { name: "File Manager", link: "/", icon: FiFolder },
     { name: "Cart", link: "/", icon: FiShoppingCart },
     { name: "Saved", link: "/", icon: AiOutlineHeart, margin: true },
@@ -29,7 +29,6 @@ const AsideNavbar = () => {
   const handleLogout = async () => {
     localStorage.clear();
     dispatch(resetDetails());
-    window.location.reload()
     navigate("/login");
   };
 

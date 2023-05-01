@@ -5,6 +5,9 @@ const NewProject = lazy(() =>
 );
 import LogoLoader from "../Components/Loaders/logoLoader";
 import ErrorBoundary from "../Components/ErrorBoundaries/ErrorBoundary";
+import ViewProjectPage from "../Pages/User/ViewProjectPage";
+
+
 function ProjectRouter() {
   return (
     <div>
@@ -17,6 +20,17 @@ function ProjectRouter() {
             <Suspense fallback={<LogoLoader />}>
               <ErrorBoundary>
                 <NewProject />
+              </ErrorBoundary>
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/project/"
+          element={
+            <Suspense fallback={<LogoLoader />}>
+              <ErrorBoundary>
+                <ViewProjectPage />
               </ErrorBoundary>
             </Suspense>
           }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
+import { SlRefresh } from "react-icons/sl";
 import CreateWorkspace from "../Modal/CreateWorkspace";
 import { CirclePicker } from "react-color";
 import { themeReducer } from "../../Redux/Slices/themeSlice";
@@ -16,13 +17,14 @@ import swalAlerts from "../SwalAlerts/SwalAlerts";
 
 const NewProject = () => {
   // const {data} = useRealtimeDb()
-  const {projectCreationSuccess} = swalAlerts()
-  const { getWorkspaces } = workspaceApi();
+  const { projectCreationSuccess } = swalAlerts();
+  const { getWorkspaces ,getSelectedWorkspace } = workspaceApi();
   const { createProject } = projectApi();
   const dark = useSelector(themeReducer);
   const { userId } = useSelector(userReducer);
   const [toggleName, setToggleName] = useState("workspace");
   const [workspaces, setWorkSpaces] = useState();
+  const [selectedWorkspaces, setSelectedWorkSpaces] = useState();
   const [rerender, setRerender] = useState(false);
   const navigate = useNavigate();
   const [projectDetails, setProjectDetails] = useState({
@@ -63,7 +65,15 @@ const NewProject = () => {
     }
   };
 
-  console.log(projectDetails);
+  const getMembersOfSelectedWorkspace = async(workspaceId)=>{
+    try {
+      const response = await getSelectedWorkspace(workspaceId)
+      setSelectedWorkSpaces(response?.data?.members)
+    } catch (error) {
+      
+    }
+  }
+
 
   useEffect(() => {
     getAllWorkspaces();
@@ -77,14 +87,14 @@ const NewProject = () => {
     }
   }, [dark]);
 
- const onFinish =async ()=>{
-  try {
-    const response = await createProject(projectDetails)
-    projectCreationSuccess()
-  } catch (error) {
-    console.log(error);
-  }
- }
+  const onFinish = async () => {
+    try {
+      const response = await createProject(projectDetails);
+      projectCreationSuccess();
+    } catch (error) {
+      invalidProjectForm(error.msg)
+    }
+  };
 
   const [details, setDetails] = useState({
     color: "#fff",
@@ -107,13 +117,13 @@ const NewProject = () => {
       </div>
       <div className="text-center">
         <h1 className="mb-1 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-5xl dark:text-slate-200 text-center">
-          Initiating a Successful Project{" "}
+        From Idea to Reality
         </h1>
         <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 mt-3 dark:text-gray-400">
           {" "}
-          Creating a Project Plan with{" "}
-          <span className="text-orange-400 font-extrabold">SWARM</span> Project
-          Management Tool
+          Crafting a  {" "}
+          <span className="text-orange-400 font-extrabold">Revolutionary </span> 
+          Project That Will Change the Game
         </p>
       </div>
 
@@ -227,7 +237,7 @@ const NewProject = () => {
                       <option selected disabled>
                         Choose a Workspace
                       </option>
-                      {workspaces?.map((item, index) => {
+                      {workspaces?.ownedWorkspaces.map((item, index) => {
                         return (
                           <option value={item._id} key={index}>
                             {item?.name}
@@ -398,7 +408,6 @@ const NewProject = () => {
                     projectDetails.from == ""
                   ) {
                     invalidProjectForm("All fields must be filled");
-                    console.log(projectDetails);
                   } else {
                     setToggleName("enlist");
                   }
@@ -409,7 +418,7 @@ const NewProject = () => {
             </div>
             {/*Enlist -------------------------------------------------------------------------------------------------------------------------------------------------------*/}
             <div
-              className={`p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800  overflow-hidden ${
+              className={`p-4 bg-white rounded-lg md:p-4 dark:bg-gray-800  overflow-hidden ${
                 toggleName === "enlist"
                   ? "block transition-all duration-1000 delay-500"
                   : "hidden"
@@ -420,9 +429,21 @@ const NewProject = () => {
             >
               <div>
                 <AddMembersToWorkspace data={projectDetails.workspace} />
-                <p className="font-medium text-2xl text-gray-600">
-                  Select members from workspace
+                <p className="text-end my-4 ">
+                  <button
+                    type="button"
+                    class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2  dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    onClick={()=>getMembersOfSelectedWorkspace(projectDetails.workspace)}
+                  >
+                    <div className="flex justify-center items-center gap-2">
+                      <span>
+                        <SlRefresh />
+                      </span>
+                      <span>Refresh</span>
+                    </div>
+                  </button>
                 </p>
+                {/*  */}
                 <div
                   id=""
                   className="  bg-white rounded-lg shadow  dark:bg-gray-700 border border-gray-300"
@@ -456,41 +477,50 @@ const NewProject = () => {
                     </div>
                   </div>
                   <ul
-                    className="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200 grid  lg:grid-cols-3 gap-2 md:gap-5"
+                    className="h-48 overflow-y-scroll px-3 pb-3 text-sm text-gray-700 dark:text-gray-200 grid md:grid-cols-2 lg:grid-cols-3 md:gap-5"
                     aria-labelledby="dropdownSearchButton "
                   >
-                    {workspaces?.[0]?.members?.map((member) => {
-                      
-                      return member.status == "accepted" ? (
-                        <li key={member.email}>
-                          <input
-                            type="checkbox"
-                            id={member.email}
-                            value={member.email}
-                            className="hidden peer"
-                            required=""
-                            onClick={handleCheckboxClick}
-                          />
+                    {selectedWorkspaces?.map((member) => {
+                      return (
+                        <li key={member.email} className="">
+                          {member.status == "pending" ||
+                          member?.status == "declined" ? (
+                            <input
+                              disabled
+                              type="checkbox"
+                              id={member.email}
+                              value={member.email}
+                              className="hidden peer "
+                              required=""
+                              onClick={handleCheckboxClick}
+                            />
+                          ) : (
+                            <input
+                              type="checkbox"
+                              id={member.email}
+                              value={member.email}
+                              className="hidden peer"
+                              required=""
+                              onClick={handleCheckboxClick}
+                            />
+                          )}
+
                           <label
                             htmlFor={member.email}
-                            className="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-gray-200 border-2 border-gray-300  cursor-pointer dark:hover:text-gray-200 dark:border-gray-600 peer-checked:border-green-600 hover:text-gray-600 dark:peer-checked:text-green-400 peer-checked:text-gray-900 hover:bg-gray-300 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-900"
+                            className="break-all inline-flex items-center justify-between w-full p-3 text-gray-500 bg-gray-200 border-2 border-gray-300  cursor-pointer dark:hover:text-gray-200 dark:border-gray-600 peer-checked:border-green-600 hover:text-gray-600 dark:peer-checked:text-green-400 peer-checked:text-gray-900 hover:bg-gray-300 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-900"
                           >
-                            <div className="flex gap-3">
-                              <div className="md:block hidden w-10 h-8 bg-orange-300 rounded-full text-center text-black font-extrabold text-xl">
-                                S
-                              </div>
-                              <div className="w-full md:text-lg font-semibold">
+                            <div className="flex items-center justify-center gap-3">
+                              
+                              <div className="md:text-lg font-semibold">
                                 {member.email}
                               </div>
                             </div>
                           </label>
                         </li>
-                      ) : (
-                        "Add members to the workspace"
                       );
                     })}
                   </ul>
-                  <Link className="flex items-center p-3 text-sm font-medium text-red-600 border-t border-gray-400 rounded-b-lg bg-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-red-500 hover:underline">
+                  {/* <Link className="flex items-center p-3 text-sm font-medium text-red-600 border-t border-gray-400 rounded-b-lg bg-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-red-500 hover:underline">
                     <svg
                       className="w-5 h-5 mr-1"
                       aria-hidden="true"
@@ -501,13 +531,13 @@ const NewProject = () => {
                       <path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 17a6 6 0 00-12 0h12zM13 8a1 1 0 100 2h4a1 1 0 100-2h-4z"></path>
                     </svg>
                     Finalise the Users
-                  </Link>
-                            
+                  </Link> */}
+                
                 </div>
-                <div className="text-center mt-10">
+                <div className="text-center mt-4">
                   <button
                     type="button"
-                    className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     onClick={() => {
                       setToggleName("project");
                     }}
@@ -516,7 +546,7 @@ const NewProject = () => {
                   </button>
                   <button
                     type="button"
-                    className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     onClick={onFinish}
                   >
                     Finish

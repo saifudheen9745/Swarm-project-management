@@ -34,10 +34,10 @@ function SignUpPage() {
         }
         try {
             const signupResponse = await doRegister(signupFormData) //api call to register user
-            console.log(signupResponse);
+  
             successRegistration()
         } catch (error) {
-            console.log(error);
+       
             invalidRegisterCred(error)
         }
         

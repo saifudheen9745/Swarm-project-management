@@ -10,10 +10,12 @@ const {
   sentMailToAllMembers,
   insertMembers,
   updateDb,
+  findOneWorkspace
 } = workspaceOptions;
 
 import encrypt from "../../encryption/crypto";
 import { jwtOptions } from "../../JwtConfig/jwtConfig";
+import { Types } from "mongoose";
 const { decryptEmail } = encrypt();
 
 const jwt = new jwtOptions();
@@ -23,7 +25,6 @@ export const createWorkspace = async (req: Request, res: Response) => {
   try {
     console.log(req.body);
 
-    console.log("herere");
     const workspace = await createNewWorkspace(req.body);
     console.log(workspace);
     res.status(200).json({ msg: "created" });
@@ -56,9 +57,11 @@ export const editWorkspace = async (req: Request, res: Response) => {
 
 export const fetchAllWorkspace = async (req: Request, res: Response) => {
   try {
-    const userId: any = req.params.userId;
+    const userId: string = req.body.userId;
+    const email:string = req.body.email
 
-    const response = await getWokspace(userId);
+    
+    const response = await getWokspace(userId,email);
 
     res.status(200).json(response);
   } catch (error) {
@@ -68,13 +71,16 @@ export const fetchAllWorkspace = async (req: Request, res: Response) => {
 };
 
 export const sentMailToVerifyMembers = async (req: Request, res: Response) => {
-  console.log(req.body);
-
   try {
     const emails: Array<string> = req.body.userEmails;
     const workspaceId: string = req.body.workspaceId;
-    const mailResponse = await sentMailToAllMembers(emails, workspaceId);
+
+    
+  
     const dbResponse = await insertMembers(workspaceId, emails);
+
+    
+    const mailResponse = await sentMailToAllMembers(dbResponse, workspaceId);
     res.status(200).json({ sent: true });
   } catch (error) {
     res.status(401).json(error);
@@ -110,8 +116,20 @@ export const verifyWorkspaceInvitationLink = async (
       name: response.fname,
       email: response.email,
     });
-
   } catch (error) {
     res.status(401).json(error);
+  }
+};
+
+export const fetchSelectedWorkspace = async (req: Request, res: Response) => {
+  try {
+    const workspaceId:string = req.params.workspaceId 
+    const dbResponse = await findOneWorkspace(workspaceId)
+    console.log(dbResponse);
+    
+    res.status(200).json(dbResponse)
+    
+  } catch (error) {
+    res.status(401).json(error)
   }
 };

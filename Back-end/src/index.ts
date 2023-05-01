@@ -8,6 +8,7 @@ import { ConnectToDatabase } from "./Connection/connection";
 import authRoute from './Routes/UserRoutes/authRoute'
 import projectRoute from './Routes/UserRoutes/projectRoute'
 import workspaceRoute from './Routes/UserRoutes/workspaceRoute'
+import taskRoute from './Routes/UserRoutes/taskRoute'
 
 const app:Application = express()
 
@@ -32,6 +33,7 @@ app.use(express.static('./src/Public'))
 app.use('/',authRoute)
 app.use('/project',projectRoute)
 app.use('/workspace',workspaceRoute)
+app.use('/task',taskRoute)
 
 /*--------Server Running--------------*/
 

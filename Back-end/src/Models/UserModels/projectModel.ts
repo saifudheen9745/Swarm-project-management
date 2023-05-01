@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const projectSchema = new mongoose.Schema({
     name:{
@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema({
         required:true
     },
     workspace:{
-        type:String,
+        type:Types.ObjectId,
         required:true
     },
     members:{
@@ -28,6 +28,14 @@ const projectSchema = new mongoose.Schema({
     from:{
         type:String,
         required:true
+    },
+    status:{
+        type:Boolean,
+        default:false
+    },
+    pending:{
+        type:Boolean,
+        default:false
     }
 })
 

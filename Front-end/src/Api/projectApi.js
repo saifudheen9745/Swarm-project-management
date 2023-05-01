@@ -8,11 +8,37 @@ const projectApi = () => {
     try {
       return await axiosPrivate.post("/project/create", projectDetails);
     } catch (error) {
-      throw{error}
+      throw{msg:error.response.data.error.error.msg}
     }
   };
 
-  return {createProject};
+  const fetchAProjectDetails = async (projectId) => {
+    try {
+      return await axiosPrivate.get(`/project/details/${projectId}`);
+    } catch (error) {
+      throw{msg:error.response.data.error.error.msg}
+    }
+  };
+
+  const fetchAllProjects = async (workspaceId) => {
+    try {
+      return await axiosPrivate.get(`/project/${workspaceId}`);
+    } catch (error) {
+      throw{msg:error.response.data.error.error.msg}
+    }
+  };
+
+  const getRegisterdProjectMembers = async (projectId) => {
+    try {
+      const {data} = await axiosPrivate.get(`/project/members/${projectId}`);
+      return data
+    } catch (error) {
+      console.error("Error from getRegisterdProjectMembers api ",error);
+      throw {error}
+    }
+  }
+
+  return {createProject,fetchAllProjects,fetchAProjectDetails,getRegisterdProjectMembers};
 };
 
 export default projectApi;

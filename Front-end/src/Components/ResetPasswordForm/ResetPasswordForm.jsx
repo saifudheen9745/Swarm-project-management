@@ -22,7 +22,6 @@ function ResetPasswordForm() {
         const response = await sentOtpForPasswordChange({email:mail})
         setViewOtp(!viewOtp)
     } catch (error) {
-      console.log("here",error);
       invalidLoginCred(error.msg)
     }
   };
@@ -31,7 +30,7 @@ function ResetPasswordForm() {
     e.preventDefault()
     try {
         const response = await verifyOtpForPasswordChange({otp:otp})
-        console.log(response);
+
         setMailSent(!mailSent)
     } catch (error) {
       invalidLoginCred(error.msg)

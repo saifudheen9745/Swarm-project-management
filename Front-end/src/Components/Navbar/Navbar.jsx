@@ -56,13 +56,7 @@ function Navbar() {
                 />
               )}
             </div>
-            <div>
-              <button className="bg-red-900  text-white" onClick={()=>{
-                localStorage.clear()
-                dispatch(resetDetails())
-                navigate('/login')
-              }}>Logout</button>
-            </div>
+            
             <Link
               type="button"
               className="hidden md:flex text-white gap-1 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-green-700 dark:hover:bg-green-900 dark:focus:ring-green-800"
@@ -118,9 +112,9 @@ function Navbar() {
                 </Link>
               </li>
               <li >
-                <linLink className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+                <Link className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
                   Contact
-                </linLink>
+                </Link>
               </li>
             </ul>
           </div>

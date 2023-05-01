@@ -6,6 +6,7 @@ import  {userReducer}  from "../../Redux/Slices/userSlice";
 
 function  MainSide() {
   const {name} = useSelector(userReducer)
+
   const {formattedDate,greeting} = useGreeting()
   return (
     <div className="h-screen  overflow-scroll p-5 bg-gray-100 dark:bg-slate-800">

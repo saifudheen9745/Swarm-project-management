@@ -126,7 +126,39 @@ const apiCall = () => {
     }
   };
 
+  const getUser = async(userId)=>{
+    try {
+      const response = await axiosPrivate.get(`/getuser/${userId}`)
+      return response
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  const editUserDetails = async(userDetails)=>{
+    try {
+      const response = await axiosPrivate.post('/edituser',{userDetails})
+      return response
+    } catch (error) {
+      
+      throw{error}
+    }
+  }
+
+  const updateUserPassword = async (passDetails)=>{
+    try {
+      const response = await axiosPrivate.post('/updateuserpassword',{passDetails})
+      return response
+    } catch (error) {
+      throw{err:error.response.data.error.msg}
+    }
+  }
+
+
+
   return {
+    updateUserPassword,
+    editUserDetails,
     check,
     createNewAccessToken,
     doRegister,
@@ -140,6 +172,7 @@ const apiCall = () => {
     sentOtpForPasswordChange,
     verifyOtpForPasswordChange,
     updatePassword,
+    getUser
   };
 };
 

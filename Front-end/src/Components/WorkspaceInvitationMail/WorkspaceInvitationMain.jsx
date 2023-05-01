@@ -8,13 +8,13 @@ function WorkspaceInvitationMain() {
     const navigate = useNavigate()
     const {workspaceId,encEmail,choice} = useParams()
     const dispatch = useDispatch()
-    console.log(workspaceId,encEmail,choice);
+
     const {verifyWorkspaceInvitationMail} = workspaceApi()
     const doWorkspaceVerification = async(workspaceId,encEmail,choice)=>{
         try {
             const response = await verifyWorkspaceInvitationMail(workspaceId,encEmail,choice)
             if(response){
-                console.log(response);
+              
                 const {userId,name,email,accessToken} = response
                 dispatch(setDetails({userId,name,email,accessToken}))
                 navigate('/home')

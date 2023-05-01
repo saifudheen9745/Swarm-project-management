@@ -13,7 +13,7 @@ export default  function useGreeting() {
 
   useEffect(() => {
     const hour = date.getHours();
-    console.log(hour);
+
     if (hour < 12) {
       setGreeting('Good morning!');
     } else if (hour < 16) {

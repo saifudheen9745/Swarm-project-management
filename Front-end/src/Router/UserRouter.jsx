@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import ErrorPage from "../Components/ErrorPageComponent.jsx/ErrorPage";
 const EmailConfirmationPage = lazy(() =>
   import("../Pages/User/EmailConfirmationPage")
 );
@@ -11,8 +10,12 @@ const OtpLoginPage = lazy(() => import("../Pages/User/OtpLoginPage"));
 const RegisterPage = lazy(() => import("../Pages/User/RegisterPage"));
 const ResetPasswordPage = lazy(() => import("../Pages/User/ResetPasswordPage"));
 const TestPage = lazy(() => import("../Pages/User/TestPage"));
+const UserAccountPage = lazy(() => import("../Pages/User/UserAccountPage"));
+const ChatPage = lazy(() => import("../Pages/User/ChatPage"));
 import LogoLoader from "../Components/Loaders/logoLoader";
 import ErrorBoundary from "../Components/ErrorBoundaries/ErrorBoundary";
+
+
 
 function UserRouter() {
   return (
@@ -24,7 +27,7 @@ function UserRouter() {
           path="/login"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <LoginPage />
               </ErrorBoundary>
             </Suspense>
@@ -35,7 +38,7 @@ function UserRouter() {
           path="/login/:hello"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <LoginPage />
               </ErrorBoundary>
             </Suspense>
@@ -46,7 +49,7 @@ function UserRouter() {
           path="/register"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <RegisterPage />
               </ErrorBoundary>
             </Suspense>
@@ -57,7 +60,7 @@ function UserRouter() {
           path="/"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <LandingPage />
               </ErrorBoundary>
             </Suspense>
@@ -68,7 +71,7 @@ function UserRouter() {
           path="/test"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <TestPage />
               </ErrorBoundary>
             </Suspense>
@@ -79,7 +82,7 @@ function UserRouter() {
           path="/verifyMail/:id/:token"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <EmailConfirmationPage />
               </ErrorBoundary>
             </Suspense>
@@ -90,7 +93,7 @@ function UserRouter() {
           path="/otp"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <OtpLoginPage />
               </ErrorBoundary>
             </Suspense>
@@ -101,7 +104,7 @@ function UserRouter() {
           path="/home"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <HomePage />
               </ErrorBoundary>
             </Suspense>
@@ -112,8 +115,30 @@ function UserRouter() {
           path="/resetpassword"
           element={
             <Suspense fallback={<LogoLoader />}>
-              <ErrorBoundary >
+              <ErrorBoundary>
                 <ResetPasswordPage />
+              </ErrorBoundary>
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/account"
+          element={
+            <Suspense fallback={<LogoLoader />}>
+              <ErrorBoundary>
+                <UserAccountPage />
+              </ErrorBoundary>
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/chat"
+          element={
+            <Suspense fallback={<LogoLoader />}>
+              <ErrorBoundary>
+                <ChatPage />
               </ErrorBoundary>
             </Suspense>
           }

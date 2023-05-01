@@ -5,12 +5,15 @@ import {
   editWorkspace,
   fetchAllWorkspace,
   sentMailToVerifyMembers,
-  verifyWorkspaceInvitationLink
+  verifyWorkspaceInvitationLink,
+  fetchSelectedWorkspace
 } from "../../Controllers/UserControllers/workspaceControllers";
 
 const Router = express.Router();
 
-Router.get("/:userId",fetchAllWorkspace)
+Router.post("/",fetchAllWorkspace)
+
+Router.get("/selectedone/:workspaceId",fetchSelectedWorkspace)
 
 Router.post("/create", createWorkspace);
 
@@ -21,5 +24,7 @@ Router.patch("/edit/:id", editWorkspace);
 Router.post("/sentverifymail",sentMailToVerifyMembers)
 
 Router.get("/verifyinvitationmail/:workspace/:encemail/:choise",verifyWorkspaceInvitationLink)
+
+
 
 export default Router;

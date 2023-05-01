@@ -8,7 +8,7 @@ const dbOptions:MyConnectOptions = {
 
 
 export const ConnectToDatabase = ()=>{
-    mongoose.connect('mongodb://0.0.0.0:27017/SWARM',dbOptions).then(()=>{
+    mongoose.connect('mongodb+srv://saifudheen:saifu123@cluster0.ddiqrrn.mongodb.net/SWARM?retryWrites=true&w=majority',dbOptions).then(()=>{
         console.log("Database Swarm connection success");
     }).catch((err)=>{
         console.log(`Database error: ${err}`);

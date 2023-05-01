@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import {
   userGoogleSchema,
   userOtpSchema,
@@ -208,6 +209,49 @@ export class authRepository {
       }
     } catch (error) {
       throw { error };
+    }
+  }
+
+  async getUserDetailsFromDb(userId:string){
+    try {
+      const user = await userRegisterSchema.find({_id:userId})
+      return user?.[0]
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async findUserByMobileOrEmail(identifier:string){
+    try {        
+      
+      return  await userRegisterSchema.findOne({$or: [{ email: identifier }, { mobile: identifier }],});
+    } catch (error) {        
+      throw {error}
+    }
+  }
+
+  async editUserDetailsInDb(userDetails:any){
+    try {
+
+      return await userRegisterSchema.updateOne(
+        { _id: userDetails.userId }, // filter for the document to update
+        { $set: { fname:userDetails.fname, email:userDetails.email, mobile:userDetails.mobile } } // update operation to perform
+      )
+      
+    } catch (error) {
+      throw{error}
+    }
+  }
+
+  async updateUserPassInDb(passDetails:any){
+    try {
+      return await userRegisterSchema.updateOne(
+        {_id:passDetails.userId},
+        {$set:{password:passDetails.newPass}}
+      )
+      
+    } catch (error) {
+      throw{error}
     }
   }
 }
