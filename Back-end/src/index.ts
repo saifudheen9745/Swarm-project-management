@@ -1,9 +1,11 @@
 import express, { Application } from "express";
-import dotenv from 'dotenv'
-import cors from 'cors'
+import * as dotenv from 'dotenv';
+import  cookieParser  from 'cookie-parser';
+import  cors  from 'cors';
+
 import morgan from "morgan";
-import bodyParser from 'body-parser'
-import cookieParser from "cookie-parser";
+import * as bodyParser from 'body-parser';
+//
 import { ConnectToDatabase } from "./Connection/connection";
 import authRoute from './Routes/UserRoutes/authRoute'
 import projectRoute from './Routes/UserRoutes/projectRoute'

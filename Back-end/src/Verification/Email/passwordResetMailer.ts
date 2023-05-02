@@ -1,4 +1,4 @@
-import NodeMailer from 'nodemailer'
+import * as NodeMailer from 'nodemailer'
 
 export const sentResetPasswordMail = async(email:string,otp:string) =>{
     try {

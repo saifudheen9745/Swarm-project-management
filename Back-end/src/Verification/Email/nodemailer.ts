@@ -1,4 +1,5 @@
-import NodeMailer from 'nodemailer'
+import * as NodeMailer from 'nodemailer';
+
 
 export const sentMail = async(email:string,link:string) =>{
     try {

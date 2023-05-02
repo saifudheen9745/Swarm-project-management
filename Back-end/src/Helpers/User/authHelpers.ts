@@ -7,11 +7,11 @@ import {
   userLoginInterface,
   userRegInterface,
 } from "../../Types/user.types";
-import bcrypt from "bcrypt";
+import { hash, compare } from "bcrypt";
 import { authRepository } from "../../Repostory/UserRepository/authRepository.service";
 import { sentMail } from "../../Verification/Email/nodemailer";
 import { jwtOptions } from "../../JwtConfig/jwtConfig";
-import otpGenerator from "otp-generator";
+import { generate } from "otp-generator";
 
 
 const jwt = new jwtOptions();
@@ -42,7 +42,7 @@ export class authHelpers {
   async doSignUp(regDetails: userRegInterface) {
     try {
       if (regDetails.password){
-        regDetails.password = await bcrypt.hash(regDetails.password, 10);
+        regDetails.password = await hash(regDetails.password, 10);
       }
       return await registerUser(regDetails);
     } catch (error: any) {
@@ -127,7 +127,7 @@ export class authHelpers {
 
   async generateOtp(email: string) {
     try {
-      const otp = await otpGenerator.generate(6, {
+      const otp = await generate(6, {
         upperCaseAlphabets: false,
         specialChars: false,
       });
@@ -148,7 +148,7 @@ export class authHelpers {
   async updatePassword(updatePassDetails: updatePasswordDetails) {
     try {
       if(updatePassDetails.password){
-        updatePassDetails.password = await bcrypt.hash(updatePassDetails.password,10)
+        updatePassDetails.password = await hash(updatePassDetails.password,10)
         return await updatePasswordDb(updatePassDetails);
       }  
     } catch (error) {
@@ -192,12 +192,12 @@ export class authHelpers {
     try {
       const userDetails = await findUserById(passDetails.userId)
       if(userDetails.password){
-        const isValidUser: any = await bcrypt.compare(passDetails.currentPass, userDetails.password);
+        const isValidUser: any = await compare(passDetails.currentPass, userDetails.password);
         if(!isValidUser){
           throw{msg:"Incorrect current password"}
         }
       }
-      passDetails.newPass = await bcrypt.hash(passDetails.newPass, 10);
+      passDetails.newPass = await hash(passDetails.newPass, 10);
       return await updateUserPassInDb(passDetails)
     } catch (error) {
       throw{error}

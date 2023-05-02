@@ -1,4 +1,4 @@
-import NodeMailer from 'nodemailer'
+import * as NodeMailer from 'nodemailer'
 import encrypt from '../../encryption/crypto';
 
 const {encryptEmail} =  encrypt()

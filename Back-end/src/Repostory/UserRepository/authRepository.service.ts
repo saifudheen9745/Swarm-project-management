@@ -11,7 +11,7 @@ import {
   userLoginInterface,
   userRegInterface,
 } from "../../Types/user.types";
-import bcrypt from "bcrypt";
+import { compare } from "bcrypt";
 
 export class authRepository {
   async registerUser(regDetails: userRegInterface) {
@@ -43,7 +43,7 @@ export class authRepository {
       });
       if (userFound.length == 0) throw { msg: "Invalid credentials" };
       const passwordFromDb: any = userFound[0]?.password;
-      const isValidUser: any = await bcrypt.compare(password, passwordFromDb);
+      const isValidUser: any = await compare(password, passwordFromDb);
       if (isValidUser) {
         if (!userFound[0].isVerified) {
           throw { msg: "Please verify email to login", userVerified: false };
