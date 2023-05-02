@@ -31,6 +31,10 @@ function ChatBox() {
     }
   };
 
+  const handleProjectClick = async(projectId)=>{
+    console.log(projectId);
+  }
+
   useEffect(() => {
     getAllWorkspaces();
   }, []);
@@ -41,7 +45,7 @@ function ChatBox() {
     <div className="h-full  overflow-scroll bg-gray-100 dark:bg-slate-800">
       <div className="h-full flex w-full rounded-3xl">
         <div className="w-1/4 h-full bg-gray-200 dark:bg-gray-800 ">
-          <div className="flex 1/6 px-10 pt-8 justify-center items-center">
+          <div className="flex px-10 pt-8 justify-center items-center">
             {projects && (
               <button
                 onClick={()=>setProjects('')}
@@ -95,8 +99,20 @@ function ChatBox() {
             </div>
           }
         </div>
-        <div className="w-3/4 h-full bg-gray-300 dark:bg-gray-900 ">
-
+        <div className="w-3/4 h-full flex justify-center pt-5 bg-gray-300 dark:bg-gray-900 ">
+          <div className="shadow-xl rounded-xl  w-[90%] h-[92%] bg-gray-200 dark:bg-gradient-to-b from-gray-900 to-gray-700">
+            <div className="h-[90%] overflow-y-scroll scrollbar-thin px-2 dark:text-white">
+               
+            </div>
+            <div className="h-[10%] flex items-center gap-5 justify-center">
+              <div className="w-[80%]">
+                <input type="text" id="simple-search" class="bg-gray-50  text-gray-900 text-sm rounded-lg block w-full pl-10 p-2.5  dark:bg-gray-500  dark:text-white" placeholder="Search" />
+              </div>
+              <div className="flex justify-center items-center">
+                <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2  ">Send</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

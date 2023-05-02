@@ -8,19 +8,21 @@ import ProjectDetails from "../ProjectDetails/ProjectDetails";
 import { ToastContainer } from "react-toastify";
 import TaskComponent from "../TaskComponent/TaskComponent";
 import { useLocation } from "react-router-dom";
+import taskApi from "../../Api/taskApi";
 
 function ViewProjectComponent() {
-  const location = useLocation()
+  const location = useLocation();
   const projectId = location.state?.projectId;
   const workspaceType = location.state?.workspaceType;
   const { fetchAProjectDetails } = projectApi();
+  const { getAllTaskOfAProject } = taskApi();
   const [projectDetails, setProjectDetails] = useState("");
   const [mobileDropdown, setMobileDropdown] = useState(false);
+
   const [nav, setNav] = useState("overview");
 
   const getProjectDetails = async () => {
     try {
-    
       const response = await fetchAProjectDetails(projectId);
       if (response.data) {
         setProjectDetails(response.data);
@@ -29,11 +31,13 @@ function ViewProjectComponent() {
       console.log(error);
     }
   };
+
+
+  console.log(projectDetails);
+
   useEffect(() => {
     getProjectDetails();
   }, []);
-
-
 
   return (
     <div className="dark:bg-slate-800 bg-gray-200  lg:p-8 p-3  overflow-y-auto h-screen scrollbar-thumb-gray-900  scrollbar-thin">

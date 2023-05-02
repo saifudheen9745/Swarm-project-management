@@ -1,14 +1,42 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProgressCircleChart from "../Chart/ProgressCircleChart";
 import AddMembersToProject from "../Modal/AddMembersToProject";
+import taskApi from "../../Api/taskApi";
 
 // import AddMembersToProject from "../Modal/AddMembersToProject";
 
 const ProjectDetails = ({ details }) => {
-
+  const {getAllTaskOfAProject} = taskApi()
+  const [percent,setPercent] = useState()
   const [showAddMemberModal,setShowAddMemberModal] = useState(false)
+
+
+  const getTaskDetails = async () => {
+    try {
+      const response = await getAllTaskOfAProject(details?._id);
+      if (response) {
+        const completedTask = response?.data?.filter((task) => {
+          return task.status === "Completed";
+        });
+        const percentage = (completedTask.length/response?.data.length) * 100;
+        if(isNaN(percentage)){
+          console.log("asdf");
+          setPercent(0)
+        }else{
+          setPercent(Math.round(percentage));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  useEffect(() => {
+    getTaskDetails();
+  }, []);
+
 
   return (
     <>
@@ -21,7 +49,7 @@ const ProjectDetails = ({ details }) => {
             PROJECT OVERVIEW
           </h1>
           <div className="flex justify-center items-center ">
-            <ProgressCircleChart percentage={100} />
+            <ProgressCircleChart percentage={percent} />
           </div>
         </div>
 

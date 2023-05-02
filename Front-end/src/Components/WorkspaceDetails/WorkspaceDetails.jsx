@@ -12,8 +12,11 @@ import { useNavigate } from "react-router-dom";
 
 function WorkspaceDetails() {
   const navigate = useNavigate();
+  const [workspaceList, setWorkspaceList] = useState(false);
   const [workspaces, setWorkspaces] = useState();
+  const [selectedWorkspaces, setSelectedWorkspaces] = useState();
   const [workspaceType, setWorkspaceType] = useState();
+
   const [projects, setProjects] = useState();
   const { getWorkspaces, getSelectedWorkspace } = workspaceApi();
   const { fetchAllProjects, fetchAProjectDetails } = projectApi();
@@ -24,7 +27,6 @@ function WorkspaceDetails() {
     try {
       const response = await getWorkspaces(userId, email);
       setWorkspaces(response.data);
- 
     } catch (error) {
       console.log(error);
     }
@@ -36,28 +38,40 @@ function WorkspaceDetails() {
 
   const handleProjectClick = async (projectId) => {
     try {
-    
       navigate("/project", {
-        state: { projectId, workspaceType }
+        state: { projectId, workspaceType },
       });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleWorkspaceList = () => {
+    setWorkspaceList(!workspaceList);
+  };
 
   const handleWorkspaceDropdown = () => {
     setShowModal(true);
   };
 
-  const handleWorkspaceClick = async (workspaceId,workspaceType) => {
+  const handleOwnedWorkspaceClick = () => {
+    setSelectedWorkspaces(workspaces?.ownedWorkspaces);
+    setWorkspaceType("Owned");
+  };
+
+  const handleSharedWorkspaceClick = async () => {
+    setSelectedWorkspaces(workspaces?.sharedWorkspaces);
+    setWorkspaceType("Shared");
+  };
+
+
+  const handleWorkspaceClick = async (workspaceId) => {
     try {
-      setWorkspaceType(workspaceType)
       const workspace = await getSelectedWorkspace(workspaceId);
       setSelectedWorkspace(workspace.data);
       const projects = await fetchAllProjects(workspaceId);
       setProjects(projects.data);
-      setShowModal(false);
+      setWorkspaceList(false);
     } catch (error) {
       console.log(error);
     }
@@ -66,7 +80,7 @@ function WorkspaceDetails() {
   return (
     <div className="dark:bg-slate-800 bg-gray-100 lg:p-4 h-screen overflow-y-auto w-full">
       <div className="flex flex-col lg:flex-row p-5 bg-gray-50  rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ">
-        <div className="w-full flex flex-col">
+        <div className="w-full flex md:flex-row flex-col">
           {selectedWorkspace ? (
             <>
               <p className="flex items-end gap-3">
@@ -74,7 +88,7 @@ function WorkspaceDetails() {
                   {selectedWorkspace.name}
                 </span>{" "}
                 <span
-                  onClick={() => setShowModal(true)}
+                  onClick={() => setWorkspaceList(!workspaceList)}
                   className="hover:cursor-pointer dark:text-white"
                 >
                   <AiFillEdit />
@@ -82,76 +96,17 @@ function WorkspaceDetails() {
               </p>
             </>
           ) : (
-            <p onClick={handleWorkspaceDropdown} className="dark:text-gray-100 cursor-pointer text-4xl">Choose a Workspace</p>
+            <p
+              //onClick={handleWorkspaceDropdown}
+              onClick={handleWorkspaceList}
+              className="dark:text-gray-100 cursor-pointer text-4xl"
+            >
+              Choose a Workspace
+            </p>
           )}
         </div>
 
-        {showModal ? (
-          <div className="justify-center w-full items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className=" dark:bg-slate-700  my-6 mx-auto ">
-              {/*content*/}
-              <div className="dark:bg-slate-700  border-0 rounded-lg shadow-lg  flex flex-col w-full bg-white outline-none focus:outline-none">
-                {/*header*/}
-                <div className="flex items-start justify-center p-5 border-b border-solid border-slate-200 rounded-t">
-                  <h3 className="text-3xl dark:text-white font-semibold">
-                    Choose Workspace
-                  </h3>
-                </div>
-                {/*body*/}
-                <div className=" p-6 w-full md:w-full flex">
-                  <div className="w-full md:w-1/2 text-center">
-                    <p className="dark:text-gray-200 mb-3 font-bold text-2xl">
-                      Owned
-                    </p>
-                    <div className="">
-                      {workspaces?.ownedWorkspaces?.map((owned) => {
-                        return (
-                          <button
-                            key={owned._id}
-                            className="dark:text-gray-300 text-xl mb-2
-                          "
-                            onClick={() => handleWorkspaceClick(owned._id,"Owned")}
-                          >
-                            {owned.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/2 text-center">
-                    <p className="dark:text-gray-200 mb-3 font-bold text-2xl">
-                      Shared{" "}
-                    </p>
-                    <div className="w-full">
-                      {workspaces?.sharedWorkspaces?.map((shared) => {
-                        return (
-                          <button
-                            key={shared._id}
-                            onClick={() => handleWorkspaceClick(shared._id,"Shared")}
-                            className="dark:text-gray-300 text-xl mb-2 hover:cursor-pointer"
-                          >
-                            {" "}
-                            {shared.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-                {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
-                  <button
-                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
+        
 
         <div
           className={`${
@@ -182,19 +137,61 @@ function WorkspaceDetails() {
           </div>
         </div>
       </div>
-      <div
-        className={`${
-          projects ? "hidden" : "w-full h-96 flex justify-center items-center"
-        }`}
-      >
-        <div className="">
-          <img
-            className=" w-28 mt-24 animate-bounce"
-            src="./Images/LOGO.png"
-            alt=""
-          />
+      {workspaceList && (
+        <div className=" w-full h-40 max-h-80 flex justify-center md:pt-5 px-5">
+          <div className="w-full md:w-[50%] flex justify-start  rounded-lg bg-gray-300 dark:bg-gray-700">
+            <div className="flex  flex-col max-w-1/6  justify-center items-start gap-3 px-3 py-2">
+              <button
+                onClick={handleOwnedWorkspaceClick}
+                type="button"
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 "
+              >
+                Owned
+              </button>
+              <button
+                onClick={handleSharedWorkspaceClick}
+                type="button"
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 "
+              >
+                Shared
+              </button>
+            </div>
+            <div className="w-5/6  flex overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300 justify-center items-center rounded-r-lg bg-gray-300 dark:bg-gray-700">
+              {!selectedWorkspaces && (
+                <p className="text-xl md:text-3xl font-semibold dark:text-white">
+                  Choose a Workspace
+                </p>
+              )}
+              {selectedWorkspaces?.map((workspace) => {
+                return (
+                  <div onClick={()=> handleWorkspaceClick(workspace._id)} className="border-2 w-[50%] cursor-pointer py-2 flex justify-center items-start rounded-lg hover:text-white  border-gray-400 hover:bg-gray-700 dark:text-white">
+                    <p className="md:text-xl text-2xl dark:text-white"> {workspace.name}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+      {
+        <div
+          className={`${
+            projects
+              ? "hidden"
+              : workspaceList
+              ? "hidden"
+              : "w-full h-96 flex justify-center items-center"
+          }`}
+        >
+          <div className="">
+            <img
+              className=" w-28 mt-24 animate-bounce"
+              src="./Images/LOGO.png"
+              alt=""
+            />
+          </div>
+        </div>
+      }
       <div className={`${projects ? "" : "hidden"}`}>
         <div
           className={`${
@@ -213,7 +210,10 @@ function WorkspaceDetails() {
               <ul className="max-w-full">
                 {projects?.map((project) => {
                   return (
-                    <li key={project._id} className="pb-3 dark:bg-transparent dark:from-transparent dark:to-transparent bg-gradient-to-tr from-green-200 to-blue-200 rounded-2xl  border-cyan-900 mb-2 sm:pb-4 hover:dark:bg-slate-700 p-2 hover:bg-gray-300">
+                    <li
+                      key={project._id}
+                      className="pb-3 dark:bg-transparent dark:from-transparent dark:to-transparent bg-gradient-to-tr from-green-200 to-blue-200 rounded-2xl  border-cyan-900 mb-2 sm:pb-4 hover:dark:bg-slate-700 p-2 hover:bg-gray-300"
+                    >
                       <div className="flex items-center space-x-4 hover:transform hover:-translate-y-1 transition duration-300">
                         <div className="flex-shrink-0">
                           <div
@@ -249,7 +249,10 @@ function WorkspaceDetails() {
               <ul className=" divide-gray-200 dark:divide-gray-700 p-5">
                 {selectedWorkspace?.members?.map((member) => {
                   return (
-                    <li key={member.email} className="pb-3 mb-3 sm:pb-4 dark:bg-transparent dark:from-transparent dark:to-transparent bg-gradient-to-tr from-green-200 to-blue-200 rounded-2xl hover:dark:bg-slate-700 p-2 hover:bg-gray-300">
+                    <li
+                      key={member.email}
+                      className="pb-3 mb-3 sm:pb-4 dark:bg-transparent dark:from-transparent dark:to-transparent bg-gradient-to-tr from-green-200 to-blue-200 rounded-2xl hover:dark:bg-slate-700 p-2 hover:bg-gray-300"
+                    >
                       <div className="flex items-center space-x-4 hover:transform hover:-translate-y-1 transition duration-300">
                         <div className="flex-shrink-0">
                           <div
